@@ -3,7 +3,6 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
-  experimental: { workerThreads: true, useTypeScriptCli: false },
   async headers() {
     return [{
       source: "/(.*)",
