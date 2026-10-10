@@ -1,57 +1,30 @@
-# Murat’s portfolio
+# Portfolio starter
 
-A responsive personal portfolio built with Next.js App Router, TypeScript, and Tailwind CSS.
+A minimal dark landing page built around an interactive point globe, with an accessible static fallback and the supplied brand mark.
 
-## Run locally
+## Requirements
 
-Use Node.js 22.14 or newer.
+- Node.js 22.14 or newer
+- npm
 
-```bash
-npm install
+## Local development
+
+```powershell
+npm ci
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Copy `.env.example` to `.env` to set the public site origin used for canonical metadata and sitemap URLs:
+Then open <http://localhost:3000>. For LAN preview, this development config allows `192.168.1.9`; update `allowedDevOrigins` in `next.config.ts` if the machine's LAN address changes. The production commands are `npm run build` and `npm run start`. Run `npm run lint` and `npm run typecheck` before sharing changes.
 
-```env
-NEXT_PUBLIC_SITE_URL=https://your-domain.example
-```
+## Project structure
 
-## Run with Docker Compose
+- `src/app/` — App Router page, layout, and global styles
+- `public/brand/logo.webp` — optimized display copy of the supplied logo
+- `public/brand/logo.svg` and `public/brand/favicon.svg` — original supplied assets, kept unchanged
+- `src/app/icon.png` — compact favicon derived from the supplied mark
 
-Development mounts the working tree into the container and serves port 3000:
+The supplied SVG originals are kept byte-for-byte. The optimized derivatives are used in the starter so the large embedded PNG data in the originals is not downloaded on every page view.
 
-```bash
-docker compose --profile development up --build dev
-```
+## Next steps
 
-Build and run the standalone production image:
-
-```bash
-docker compose --profile production up --build web
-```
-
-Both services read `.env` when present. Stop them with `Ctrl+C`, or run `docker compose --profile development down` / `docker compose --profile production down` in another terminal.
-
-## Checks
-
-```bash
-npm run lint
-npm run typecheck
-npm run build
-npm test
-```
-
-Playwright stores browser binaries under `.cache/ms-playwright`. Set `PLAYWRIGHT_BROWSERS_PATH` to that directory before installing Chromium and running the browser suite.
-
-```powershell
-$env:PLAYWRIGHT_BROWSERS_PATH = ".cache/ms-playwright"
-npx playwright install chromium
-npm test
-```
-
-To use an already installed Chrome or Edge executable, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` for the test run. Responsive screenshots are saved under `.cache/qa/screenshots`.
-
-## Project content
-
-Edit the profile, selected projects, experience, and social links in `src/data/portfolio.ts`. Keep public profile URLs and project demo/source links accurate; entries without a public link are presented as concepts.
+Expand the landing page into the full portfolio with project case studies and experience content. The globe is already lazy-loaded and has a static fallback. Add Docker only when its development and production workflows are ready to maintain.

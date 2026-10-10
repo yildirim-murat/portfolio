@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1600" fill="none">
+  <defs>
+    <clipPath id="screen-clip">
+      <rect x="50" y="38" width="800" height="1524" rx="93" />
+    </clipPath>
+    <filter id="device-shadow" x="-12%" y="-4%" width="124%" height="112%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#24343A" flood-opacity=".18" />
+    </filter>
+    <linearGradient id="frame" x1="84" y1="12" x2="814" y2="1585" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#465158" />
+      <stop offset=".14" stop-color="#171E22" />
+      <stop offset=".86" stop-color="#12181B" />
+      <stop offset="1" stop-color="#465158" />
+    </linearGradient>
+    <linearGradient id="feature" x1="100" y1="541" x2="790" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E7F1F2" />
+      <stop offset="1" stop-color="#D7E8EB" />
+    </linearGradient>
+  </defs>
+
+  <g filter="url(#device-shadow)">
+    <rect x="23" y="12" width="854" height="1576" rx="116" fill="url(#frame)" stroke="#879197" stroke-opacity=".46" stroke-width="2" />
+    <path d="M68 43C90 27 117 20 149 20H751C782 20 810 28 832 44" stroke="#DDE2E3" stroke-opacity=".2" stroke-width="2" />
+    <rect x="39" y="28" width="822" height="1544" rx="103" fill="#0C1114" stroke="#657076" stroke-opacity=".55" stroke-width="2" />
+    <rect x="50" y="38" width="800" height="1524" rx="93" fill="#F7F9F8" stroke="#060A0C" stroke-width="2" />
+    <rect x="348" y="48" width="204" height="46" rx="23" fill="#101518" />
+    <circle cx="518" cy="71" r="7" fill="#18272D" />
+    <circle cx="518" cy="71" r="3" fill="#42606A" />
+    <rect x="14" y="322" width="10" height="108" rx="5" fill="#333D42" />
+    <rect x="876" y="366" width="10" height="82" rx="5" fill="#333D42" />
+    <rect x="876" y="466" width="10" height="54" rx="5" fill="#333D42" />
+  </g>
+
+  <g clip-path="url(#screen-clip)">
+  <text x="101" y="91" fill="#1B2B31" font-family="Arial, sans-serif" font-size="20" font-weight="700">9:41</text>
+  <g stroke="#28383E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M730 80H738M730 73H738M730 66H738" />
+    <path d="M754 76C762 68 775 68 783 76M759 81C765 75 772 75 778 81M766 86H771" />
+  </g>
+  <rect x="797" y="67" width="29" height="17" rx="4" stroke="#28383E" stroke-width="2.5" />
+  <rect x="800" y="70" width="20" height="11" rx="2" fill="#7EA8B0" />
+  <path d="M828 72V79" stroke="#28383E" stroke-width="2.5" stroke-linecap="round" />
+
+  <rect x="96" y="143" width="44" height="44" rx="13" fill="#24383F" />
+  <path d="M109 171V155L118 149L127 155V171M106 158H130M115 171V163H121V171" stroke="#D8E9EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <text x="157" y="171" fill="#213239" font-family="Arial, sans-serif" font-size="26" font-weight="700">Kurumlar</text>
+  <circle cx="794" cy="165" r="23" fill="#EAF0F1" />
+  <path d="M788 166C788 159 790 156 794 156C798 156 800 160 800 166L803 170H785L788 166ZM791 175C792 177 793 178 795 178C797 178 798 177 799 175" stroke="#587179" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="800" cy="153" r="3.5" fill="#B7785B" />
+
+  <text x="96" y="237" fill="#26383E" font-family="Arial, sans-serif" font-size="42" font-weight="700">Merhaba</text>
+  <text x="96" y="276" fill="#75868B" font-family="Arial, sans-serif" font-size="22">İşlemlerinize kolayca ulaşın.</text>
+  <rect x="96" y="313" width="708" height="66" rx="20" fill="#EDF2F2" />
+  <circle cx="127" cy="346" r="11" stroke="#73868C" stroke-width="3" />
+  <path d="M135 354L144 363" stroke="#73868C" stroke-width="3" stroke-linecap="round" />
+  <text x="165" y="354" fill="#9AA7AA" font-family="Arial, sans-serif" font-size="21">Hizmet veya işlem ara</text>
+
+  <text x="96" y="444" fill="#27393F" font-family="Arial, sans-serif" font-size="25" font-weight="700">Hızlı erişim</text>
+  <text x="805" y="444" fill="#70848A" font-family="Arial, sans-serif" font-size="18" text-anchor="end">Tümünü gör</text>
+
+  <rect x="96" y="476" width="338" height="185" rx="22" fill="url(#feature)" stroke="#D8E6E8" />
+  <rect x="122" y="501" width="58" height="58" rx="17" fill="#FFFFFF" />
+  <path d="M138 518H165V543H138zM144 525H159M144 532H159M144 539H154" stroke="#668B94" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <text x="122" y="600" fill="#2A4148" font-family="Arial, sans-serif" font-size="24" font-weight="700">Başvurular</text>
+  <text x="122" y="630" fill="#71868C" font-family="Arial, sans-serif" font-size="17">Başvuru işlemleri</text>
+
+  <rect x="454" y="476" width="350" height="185" rx="22" fill="#FFFFFF" stroke="#E2E9EA" />
+  <rect x="480" y="501" width="58" height="58" rx="17" fill="#EEF3F3" />
+  <path d="M493 518H525V543H493zM499 513V518M519 513V518M499 526H519M499 534H519" stroke="#71878E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <text x="480" y="600" fill="#2A3C42" font-family="Arial, sans-serif" font-size="24" font-weight="700">Kurumlar</text>
+  <text x="480" y="630" fill="#859499" font-family="Arial, sans-serif" font-size="17">Kurum bilgileri</text>
+
+  <rect x="96" y="679" width="338" height="185" rx="22" fill="#FFFFFF" stroke="#E2E9EA" />
+  <rect x="122" y="704" width="58" height="58" rx="17" fill="#EEF3F3" />
+  <path d="M139 720H164V744H139zM145 716V720M158 716V720M145 728H158M145 735H158" stroke="#71878E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <text x="122" y="803" fill="#2A3C42" font-family="Arial, sans-serif" font-size="24" font-weight="700">Görevler</text>
+  <text x="122" y="833" fill="#859499" font-family="Arial, sans-serif" font-size="17">İşlem takibi</text>
+
+  <rect x="454" y="679" width="350" height="185" rx="22" fill="#FFFFFF" stroke="#E2E9EA" />
+  <rect x="480" y="704" width="58" height="58" rx="17" fill="#EEF3F3" />
+  <path d="M494 721H524V744H494zM500 727H518M500 733H518M500 739H513" stroke="#71878E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <text x="480" y="803" fill="#2A3C42" font-family="Arial, sans-serif" font-size="24" font-weight="700">Duyurular</text>
+  <text x="480" y="833" fill="#859499" font-family="Arial, sans-serif" font-size="17">Güncel bilgiler</text>
+
+  <text x="96" y="929" fill="#27393F" font-family="Arial, sans-serif" font-size="25" font-weight="700">Son işlemler</text>
+  <rect x="96" y="955" width="708" height="82" rx="16" fill="#FFFFFF" stroke="#E4EAEB" />
+  <circle cx="132" cy="996" r="17" fill="#EFF4F4" />
+  <path d="M124 996H140M132 988V1004" stroke="#77949B" stroke-width="2" stroke-linecap="round" />
+  <rect x="164" y="983" width="204" height="7" rx="3.5" fill="#B8C6C9" />
+  <rect x="164" y="999" width="152" height="5" rx="2.5" fill="#E2E8E9" />
+  <path d="M779 989L786 996L779 1003" stroke="#9AABAF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <rect x="96" y="1051" width="708" height="82" rx="16" fill="#FFFFFF" stroke="#E4EAEB" />
+  <circle cx="132" cy="1092" r="17" fill="#EFF4F4" />
+  <path d="M124 1092H140M132 1084V1100" stroke="#77949B" stroke-width="2" stroke-linecap="round" />
+  <rect x="164" y="1079" width="164" height="7" rx="3.5" fill="#B8C6C9" />
+  <rect x="164" y="1095" width="193" height="5" rx="2.5" fill="#E2E8E9" />
+  <path d="M779 1085L786 1092L779 1099" stroke="#9AABAF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+  <rect x="50" y="1436" width="800" height="126" fill="#FFFFFF" />
+  <path d="M50 1436H850" stroke="#E6EBEC" />
+  <g fill="#73868C" font-family="Arial, sans-serif" font-size="14" text-anchor="middle">
+    <text x="151" y="1518">Ana Sayfa</text>
+    <text x="349" y="1518">İşlemler</text>
+    <text x="548" y="1518">Bildirimler</text>
+    <text x="747" y="1518">Hesabım</text>
+  </g>
+  <g stroke="#71878E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M140 1486L151 1476L162 1486V1501H140zM147 1501V1492H155V1501" />
+    <rect x="339" y="1477" width="20" height="23" rx="3" /><path d="M344 1483H354M344 1489H354M344 1495H351" />
+    <path d="M539 1498V1487C539 1480 543 1477 548 1477C553 1477 557 1480 557 1487V1498L561 1502H535L539 1498ZM545 1507C546 1509 547 1510 549 1510C551 1510 552 1509 553 1507" />
+    <circle cx="747" cy="1485" r="8" /><path d="M734 1504C736 1496 741 1493 747 1493C753 1493 758 1496 760 1504" />
+  </g>
+  <rect x="370" y="1532" width="160" height="6" rx="3" fill="#1C272B" />
+  </g>
+</svg>

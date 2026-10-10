@@ -1,24 +1,27 @@
-import { SiteHeader } from "@/components/site-header";
-import { portfolio } from "@/data/portfolio";
 import Hero from "@/components/hero";
-import { AboutSection } from "@/sections/about";
-import { ProjectsSection } from "@/sections/projects";
-import { ExperienceSection } from "@/sections/experience";
-import { ContactSection } from "@/sections/contact";
-import { SiteFooter } from "@/sections/footer";
+import { SiteBrand } from "@/components/site-brand";
+import { WayfinderBot } from "@/components/wayfinder-bot";
+import { WayfinderJourney } from "@/components/wayfinder-journey";
+import { AiModelScreen } from "@/sections/ai-model-screen";
+import { AboutScreen } from "@/sections/about-screen";
+import { FeaturedProjectScreen } from "@/sections/featured-project-screen";
+import { MobileAppScreen } from "@/sections/mobile-app-screen";
+import { ContactScreen } from "@/sections/contact-screen";
 
-export default function HomePage() {
+export default function Home() {
   return (
     <>
-      <SiteHeader email={portfolio.email} name={portfolio.name} />
+      <SiteBrand />
       <main>
-        <Hero name={portfolio.name} />
-        <AboutSection />
-        <ProjectsSection />
-        <ExperienceSection />
-        <ContactSection />
+        <Hero name="Murat YILDIRIM" />
+        <WayfinderJourney mascot={<WayfinderBot />}>
+          <AboutScreen />
+          <FeaturedProjectScreen />
+          <AiModelScreen />
+          <MobileAppScreen />
+        </WayfinderJourney>
+        <ContactScreen />
       </main>
-      <SiteFooter />
     </>
   );
 }

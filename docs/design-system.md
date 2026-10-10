@@ -1,31 +1,17 @@
-# Visual system
+# Globe landing
 
-The portfolio pairs warm, quiet editorial pages with one dark, interactive opening scene. The earth map establishes the connected-world theme, and the light sections keep project work and writing easy to scan.
+The opening page uses a nearly black field, cool gray-white type, and a restrained warm highlight for Istanbul. The supplied brand mark is shown at the upper left; the hero stays focused on the name, role, and one-line introduction.
 
-## Visual tokens
+## Type and color
 
-| Token | Value | Use |
-| --- | --- | --- |
-| Paper | `#f5f4ef` | Main page background |
-| Paper deep | `#ecebe5` | Selected work section |
-| Ink | `#20221f` | Main text |
-| Muted | `#686b64` | Supporting text |
-| Rule | `#dedfd8` | Fine dividers |
-| Cobalt | `#2548f4` | Primary project artwork and links |
-| Olive | `#7b8261` | Secondary project and emphasis |
-| Lilac | `#d9d3ec` | Mono project artwork |
-| Hero ink | `#141915` | Globe scene |
+The hero name uses a self-hosted variable Space Grotesk face from `public/fonts/space-grotesk/`, with Latin and Latin Extended subsets for Turkish characters; its OFL license is included alongside the files. It is scoped to the name only, while the remaining page uses the local system sans stack, so there are no remote font requests. The background is `#080b0f`, primary type is `#edf0f2`, secondary type is `#a8b1b8`, the Istanbul marker uses a muted sand tone (`#e9d2aa`), and the address markers use a pale ice blue (`#bdd9e6`) echoed by their softer rings. The canvas, copy, and brand mark keep their dimensions from first paint so the fallback-to-WebGL handoff does not shift the layout.
 
-Manrope is self-hosted as a variable WOFF2 font for weights 200–800. The Latin and Latin Extended subsets cover Turkish copy. Its SIL Open Font License 1.1 is included at `public/fonts/OFL.txt`; source: [Google Fonts Manrope](https://github.com/google/fonts/tree/main/ofl/manrope).
+## Globe
 
-Spacing and type scale with `clamp()`. Main content uses a 1240px maximum width and fluid page gutters; section layouts become single-column on narrow screens. The project gallery uses three distinct artwork treatments, each drawn in HTML and SVG so it stays sharp, local, and free of external image requests.
+`src/components/hero.tsx` is a server-rendered main landmark. `src/components/globe/globe-loader.tsx` observes the globe stage and loads the R3F scene only when it approaches the viewport. Until then, and whenever WebGL is unavailable or its context is lost, a compact inline dotted world map remains visible.
 
-## Globe scene
+`src/components/globe/globe-canvas.tsx` builds one GPU point geometry from 4,757 sampled land coordinates and adds 14 location markers from `src/components/globe/globe-locations.ts`: Istanbul and 13 destinations, including three in Africa, one in Saudi Arabia, two in China, two in North America, and one in South America. One Istanbul-origin request line at a time cycles through those destinations. It eases in, travels, briefly settles, then fades fully before the next request. Istanbul pulses at departure and the destination pulses at arrival. Narrow viewports draw every other land point. The land coordinates were sampled at build time from Natural Earth 1:110m polygons; that geographic dataset is public domain. The retained point list is local, attributed in `src/components/globe/world-points.ts`, and does not fetch data at runtime.
 
-`src/components/hero.tsx` owns the opening copy and the scroll handoff. It imports the WebGL scene only when the hero nears the viewport. `src/components/globe/globe-canvas.tsx` uses one merged point geometry for land, one merged line geometry for four routes, and a small set of location markers. The map contains 4,757 sampled land coordinates and draws roughly half of them on narrow viewports. The points were sampled at build time from [Natural Earth 1:110m land polygons](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_110m_land.geojson), a public-domain geographic dataset; only the compact coordinates are retained here.
+Mouse dragging turns and tilts the globe, and arrow keys provide keyboard control when the map is focused. The globe rotates slowly and responds slightly to pointer position; `prefers-reduced-motion` stops automatic rotation, parallax, and heartbeat animation while keeping manual controls available. Touch scrolling remains usable over the map. The static fallback and reduced-motion scene omit request lines.
 
-An inline dotted SVG map appears before the scene loads and when WebGL is unavailable or loses its context. Mouse dragging and arrow-key controls rotate the globe. The globe turns slowly and follows pointer movement subtly; reduced-motion settings stop the spin, parallax, reveal and scroll transform. The background and routes use low-contrast green-gray tones to keep the globe legible without a neon effect.
-
-## Interaction and accessibility
-
-Navigation and project links show visible focus outlines. The mobile menu exposes its expanded state and supports Escape. The globe is a named, keyboard-focusable group with arrow-key support and explicit rotate buttons; decorative canvas and fallback art stay out of the accessibility tree. Content maintains a semantic heading hierarchy, and all motion responds to `prefers-reduced-motion`.
+The contact screen’s low-contrast dotted silhouette in `public/images/turkey-dotted-map.svg` uses the Natural Earth 1:110m Admin 0 Turkey boundary, projected into the SVG viewBox and filled with a repeated dot pattern. Natural Earth data is public domain; the SVG is static and does not fetch map data at runtime.

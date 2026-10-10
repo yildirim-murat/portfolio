@@ -1,4 +1,4 @@
-// Sampled from Natural Earth 1:110m land polygons (public domain); see docs/design-system.md.
+﻿// Sampled from Natural Earth 1:110m land polygons (public domain); see docs/design-system.md.
 export const landCoordinates: ReadonlyArray<readonly [longitude: number, latitude: number]> = [
   [-72.9, -53.9],
   [-69.3, -53.9],

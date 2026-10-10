@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1504 940" fill="none">
+  <defs>
+    <linearGradient id="surface" x1="264" y1="80" x2="1340" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" />
+      <stop offset="1" stop-color="#F2F5F6" />
+    </linearGradient>
+    <linearGradient id="mark" x1="30" y1="28" x2="58" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C9E5EE" />
+      <stop offset="1" stop-color="#88BACB" />
+    </linearGradient>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#18303B" flood-opacity=".12" />
+    </filter>
+  </defs>
+
+  <g transform="scale(1.044444 1)">
+  <rect x="12" y="12" width="1416" height="916" rx="20" fill="#DDE5E8" opacity=".55" />
+  <g filter="url(#shadow)">
+    <rect x="24" y="20" width="1392" height="900" rx="16" fill="url(#surface)" />
+    <path d="M40 20H276V920H40C31.163 920 24 912.837 24 904V36C24 27.163 31.163 20 40 20Z" fill="#17242D" />
+
+    <rect x="48" y="46" width="42" height="42" rx="12" fill="url(#mark)" />
+    <path d="M61 73V58L69 53L77 58V73M57 63H81M66 73V65H72V73" stroke="#18303B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <text x="102" y="64" fill="#F1F5F6" font-family="Arial, sans-serif" font-size="14" font-weight="700" letter-spacing=".03em">KAMU PORTALI</text>
+    <text x="102" y="82" fill="#91A2AA" font-family="Arial, sans-serif" font-size="10" letter-spacing=".12em">YÖNETİM PANELİ</text>
+
+    <text x="50" y="132" fill="#778990" font-family="Arial, sans-serif" font-size="9" font-weight="700" letter-spacing=".16em">ÇALIŞMA ALANI</text>
+    <rect x="42" y="148" width="214" height="42" rx="9" fill="#253640" />
+    <rect x="56" y="161" width="15" height="15" rx="4" stroke="#B9D9E2" stroke-width="1.5" />
+    <path d="M60 168.5L64 172L68 165" stroke="#B9D9E2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <text x="82" y="174" fill="#F0F4F5" font-family="Arial, sans-serif" font-size="12" font-weight="600">Genel Bakış</text>
+
+    <g fill="#A5B3B8" font-family="Arial, sans-serif" font-size="12">
+      <text x="82" y="222">Kurum Yönetimi</text>
+      <text x="82" y="266">Başvurular</text>
+      <text x="82" y="310">Görev Takibi</text>
+      <text x="82" y="354">Raporlar</text>
+    </g>
+    <g stroke="#82949B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".86">
+      <rect x="56" y="207" width="14" height="14" rx="3" />
+      <path d="M59 211H67M59 215H67M59 218H64" />
+      <circle cx="63" cy="255" r="7" /><path d="M60 255H66M63 252V258" />
+      <path d="M56 299H70V310H56zM59 296V299M67 296V299M59 303H67M59 307H65" />
+      <path d="M56 342H70V357H56zM59 346H67M59 350H67M59 354H64" />
+    </g>
+    <path d="M48 390H252" stroke="#31434C" />
+    <text x="50" y="420" fill="#778990" font-family="Arial, sans-serif" font-size="9" font-weight="700" letter-spacing=".16em">HESAP</text>
+    <circle cx="64" cy="462" r="15" fill="#344A54" />
+    <circle cx="64" cy="458" r="4" fill="#C6D4D8" />
+    <path d="M56 470C57.5 465.5 60.5 464 64 464C67.5 464 70.5 465.5 72 470" stroke="#C6D4D8" stroke-width="1.4" stroke-linecap="round" />
+    <rect x="88" y="452" width="85" height="5" rx="2.5" fill="#CBD5D8" opacity=".9" />
+    <rect x="88" y="464" width="62" height="4" rx="2" fill="#75868D" />
+
+    <rect x="276" y="20" width="1140" height="66" fill="#FFFFFF" />
+    <path d="M276 86H1416" stroke="#E4E9EB" />
+    <text x="314" y="60" fill="#75868D" font-family="Arial, sans-serif" font-size="11">Çalışma alanı</text>
+    <path d="M390 56L394 60L398 56" stroke="#89999F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="1344" cy="53" r="15" fill="#F2F5F6" />
+    <path d="M1340 54C1340 49 1342 47 1344 47C1347 47 1349 50 1349 54L1351 57H1338L1340 54ZM1342 60C1342.5 61 1343 61.5 1344 61.5C1345 61.5 1345.5 61 1346 60" stroke="#63747B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="1349" cy="45" r="2.5" fill="#B87858" />
+    <circle cx="1380" cy="53" r="18" fill="#E8EFF1" />
+    <path d="M1372 59C1373.5 54 1376 52 1380 52C1384 52 1386.5 54 1388 59" stroke="#66808A" stroke-width="1.5" stroke-linecap="round" />
+    <circle cx="1380" cy="46" r="4" stroke="#66808A" stroke-width="1.5" />
+
+    <text x="314" y="136" fill="#68838C" font-family="Arial, sans-serif" font-size="9" font-weight="700" letter-spacing=".18em">YÖNETİM VE KOORDİNASYON</text>
+    <text x="314" y="178" fill="#1C2B32" font-family="Arial, sans-serif" font-size="27" font-weight="600">Kamu Kurum Dashboard</text>
+    <text x="314" y="202" fill="#79888E" font-family="Arial, sans-serif" font-size="12">Kurum süreçleri için sade bir çalışma alanı</text>
+    <rect x="1268" y="151" width="108" height="27" rx="13.5" fill="#EEF4F5" />
+    <circle cx="1282" cy="164.5" r="3" fill="#77A9B6" />
+    <text x="1292" y="168" fill="#607880" font-family="Arial, sans-serif" font-size="9" font-weight="700" letter-spacing=".08em">ÖRNEK ARAYÜZ</text>
+
+    <rect x="314" y="231" width="1062" height="120" rx="11" fill="#FFFFFF" stroke="#E3E9EB" />
+    <rect x="332" y="249" width="46" height="46" rx="12" fill="#EFF5F6" />
+    <path d="M344 281V266L355 259L366 266V281M341 269H369M351 281V273H359V281" stroke="#678A95" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    <text x="394" y="263" fill="#8B999E" font-family="Arial, sans-serif" font-size="9" font-weight="700" letter-spacing=".12em">KURUMSAL İŞ AKIŞI</text>
+    <rect x="394" y="276" width="240" height="8" rx="4" fill="#C8D3D7" />
+    <rect x="394" y="293" width="178" height="6" rx="3" fill="#E0E6E8" />
+    <path d="M1003 249V333M1114 249V333M1225 249V333" stroke="#E7ECEE" />
+    <g fill="#93A1A6" font-family="Arial, sans-serif" font-size="9" font-weight="600">
+      <text x="1022" y="269">KURUMLAR</text>
+      <text x="1134" y="269">BAŞVURULAR</text>
+      <text x="1245" y="269">GÖREVLER</text>
+    </g>
+    <g fill="#DAE2E5">
+      <rect x="1022" y="283" width="53" height="9" rx="4.5" />
+      <rect x="1134" y="283" width="53" height="9" rx="4.5" />
+      <rect x="1245" y="283" width="53" height="9" rx="4.5" />
+    </g>
+    <g fill="#EDF1F2">
+      <rect x="1022" y="301" width="68" height="5" rx="2.5" />
+      <rect x="1134" y="301" width="68" height="5" rx="2.5" />
+      <rect x="1245" y="301" width="68" height="5" rx="2.5" />
+    </g>
+
+    <rect x="314" y="375" width="665" height="320" rx="11" fill="#FFFFFF" stroke="#E3E9EB" />
+    <text x="338" y="410" fill="#34464D" font-family="Arial, sans-serif" font-size="13" font-weight="600">Süreç görünümü</text>
+    <text x="338" y="430" fill="#9AA6AA" font-family="Arial, sans-serif" font-size="10">İş akışının genel görünümü</text>
+    <rect x="850" y="394" width="102" height="26" rx="6" fill="#F5F7F8" />
+    <text x="865" y="411" fill="#77878D" font-family="Arial, sans-serif" font-size="9">Son dönem</text>
+    <path d="M346 634H949M346 580H949M346 526H949M346 472H949" stroke="#EDF0F1" />
+    <path d="M365 604C403 574 418 593 456 554C493 516 515 548 549 512C584 476 611 514 646 489C683 463 709 487 748 460C788 433 814 468 848 442C881 417 908 433 932 419" stroke="#86AEB9" stroke-width="3" stroke-linecap="round" />
+    <path d="M365 604C403 574 418 593 456 554C493 516 515 548 549 512C584 476 611 514 646 489C683 463 709 487 748 460C788 433 814 468 848 442C881 417 908 433 932 419V634H365V604Z" fill="#DCE9EC" opacity=".42" />
+    <circle cx="748" cy="460" r="5" fill="#FFFFFF" stroke="#739EAA" stroke-width="2.5" />
+    <g fill="#A4AFB3" font-family="Arial, sans-serif" font-size="8">
+      <text x="365" y="658">BAŞLANGIÇ</text><text x="542" y="658">SÜREÇ</text><text x="717" y="658">İŞLEM</text><text x="884" y="658">SONUÇ</text>
+    </g>
+
+    <rect x="1001" y="375" width="375" height="320" rx="11" fill="#FFFFFF" stroke="#E3E9EB" />
+    <text x="1025" y="410" fill="#34464D" font-family="Arial, sans-serif" font-size="13" font-weight="600">İşlem adımları</text>
+    <text x="1025" y="430" fill="#9AA6AA" font-family="Arial, sans-serif" font-size="10">Örnek süreç akışı</text>
+    <path d="M1041 467V643" stroke="#DFE7E9" stroke-width="1.5" />
+    <g>
+      <circle cx="1041" cy="474" r="7" fill="#E7F0F2" stroke="#9DBAC2" />
+      <circle cx="1041" cy="522" r="7" fill="#E7F0F2" stroke="#9DBAC2" />
+      <circle cx="1041" cy="570" r="7" fill="#E7F0F2" stroke="#9DBAC2" />
+      <circle cx="1041" cy="618" r="7" fill="#E7F0F2" stroke="#9DBAC2" />
+    </g>
+    <g fill="#68787E" font-family="Arial, sans-serif" font-size="10" font-weight="600">
+      <text x="1060" y="472">Kayıt oluşturma</text><text x="1060" y="520">İnceleme</text><text x="1060" y="568">Değerlendirme</text><text x="1060" y="616">Tamamlama</text>
+    </g>
+    <g fill="#CCD6D9">
+      <rect x="1060" y="480" width="170" height="4" rx="2" /><rect x="1060" y="528" width="198" height="4" rx="2" />
+      <rect x="1060" y="576" width="155" height="4" rx="2" /><rect x="1060" y="624" width="182" height="4" rx="2" />
+    </g>
+
+    <rect x="314" y="719" width="1062" height="166" rx="11" fill="#FFFFFF" stroke="#E3E9EB" />
+    <text x="338" y="754" fill="#34464D" font-family="Arial, sans-serif" font-size="13" font-weight="600">Kayıt listesi</text>
+    <text x="338" y="773" fill="#9AA6AA" font-family="Arial, sans-serif" font-size="10">Örnek tablo düzeni</text>
+    <path d="M338 793H1352" stroke="#E9EDEF" />
+    <g fill="#9AA6AA" font-family="Arial, sans-serif" font-size="8" font-weight="700" letter-spacing=".08em">
+      <text x="340" y="811">KAYIT</text><text x="728" y="811">BİRİM</text><text x="1006" y="811">DURUM</text><text x="1208" y="811">İŞLEM</text>
+    </g>
+    <path d="M338 822H1352M338 851H1352" stroke="#EFF2F3" />
+    <g fill="#D7E0E2">
+      <rect x="340" y="831" width="179" height="6" rx="3" /><rect x="728" y="831" width="115" height="6" rx="3" />
+      <rect x="1006" y="830" width="62" height="8" rx="4" fill="#EAF1F2" /><rect x="1208" y="831" width="88" height="6" rx="3" />
+      <rect x="340" y="861" width="151" height="6" rx="3" /><rect x="728" y="861" width="136" height="6" rx="3" />
+      <rect x="1006" y="860" width="62" height="8" rx="4" fill="#EAF1F2" /><rect x="1208" y="861" width="71" height="6" rx="3" />
+    </g>
+  </g>
+  </g>
+</svg>

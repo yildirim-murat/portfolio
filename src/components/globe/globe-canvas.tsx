@@ -1,20 +1,49 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { BufferAttribute, BufferGeometry, Group, MathUtils, Vector3 } from "three";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { BufferAttribute, BufferGeometry, Color, Group, MathUtils, MeshBasicMaterial, Quaternion, Vector3 } from "three";
 import type { MutableRefObject } from "react";
 import { landCoordinates } from "@/components/globe/world-points";
 import { GlobeFallback } from "@/components/globe/globe-fallback";
+import { globeLocations } from "@/components/globe/globe-locations";
+
+export type GlobeInteraction = {
+  beginDrag: () => void;
+  drag: (horizontal: number, vertical: number) => void;
+  endDrag: () => void;
+  rotate: (horizontal: number, vertical: number) => void;
+};
+
+export type GlobeCanvasProps = {
+  interactionRef: MutableRefObject<GlobeInteraction | null>;
+  isVisible: boolean;
+  onReady: () => void;
+  onError: (error: Error) => void;
+};
 
 const radius = 2.2;
-const destinations = [
-  { longitude: 28.97, latitude: 41.01, label: "Istanbul", primary: true },
-  { longitude: -0.13, latitude: 51.51, label: "London" },
-  { longitude: 13.4, latitude: 52.52, label: "Berlin" },
-  { longitude: -122.42, latitude: 37.77, label: "San Francisco" },
-  { longitude: 139.69, latitude: 35.68, label: "Tokyo" },
-];
+const requestFadeInDuration = 0.22;
+const requestTravelDuration = 1.25;
+const requestSettleDuration = 0.28;
+const requestFadeOutDuration = 0.65;
+const requestGapDuration = 0.55;
+const requestVisibleDuration = requestFadeInDuration + requestTravelDuration + requestSettleDuration + requestFadeOutDuration;
+const requestSlotDuration = requestVisibleDuration + requestGapDuration;
+const signalTravelDuration = 0.86;
+const requestDestinationCount = globeLocations.length - 1;
+const requestCycleDuration = requestSlotDuration * requestDestinationCount;
+
+function pulseEnvelope(time: number, start: number, duration: number) {
+  const progress = (time - start) / duration;
+  if (progress <= 0 || progress >= 1) return 0;
+  return Math.sin(Math.PI * progress) ** 2;
+}
+
+function smoothStep(value: number) {
+  const clamped = MathUtils.clamp(value, 0, 1);
+  return clamped * clamped * (3 - 2 * clamped);
+}
 
 function toSphere(longitude: number, latitude: number, sphereRadius = radius) {
   const longitudeRadians = (longitude * Math.PI) / 180;
@@ -27,24 +56,27 @@ function toSphere(longitude: number, latitude: number, sphereRadius = radius) {
 }
 
 function LandPoints({ mobile }: { mobile: boolean }) {
-  const positions = useMemo(() => {
-    const sampleEvery = mobile ? 2 : 1;
-    const coordinates = landCoordinates.filter((_, index) => index % sampleEvery === 0);
-    const values = new Float32Array(coordinates.length * 3);
-    coordinates.forEach(([longitude, latitude], index) => {
-      values.set(toSphere(longitude, latitude, radius).toArray(), index * 3);
-    });
-    return values;
-  }, [mobile]);
   const geometry = useMemo(() => {
+    const step = mobile ? 2 : 1;
+    const count = Math.ceil(landCoordinates.length / step);
+    const positions = new Float32Array(count * 3);
+    let targetIndex = 0;
+
+    for (let index = 0; index < landCoordinates.length; index += step) {
+      const [longitude, latitude] = landCoordinates[index];
+      positions.set(toSphere(longitude, latitude).toArray(), targetIndex * 3);
+      targetIndex += 1;
+    }
+
     const next = new BufferGeometry();
     next.setAttribute("position", new BufferAttribute(positions, 3));
+    next.computeBoundingSphere();
     return next;
-  }, [positions]);
+  }, [mobile]);
 
   return (
     <points geometry={geometry}>
-      <pointsMaterial color="#c0cdbb" size={0.012} sizeAttenuation transparent opacity={0.86} depthWrite={false} />
+      <pointsMaterial color="#bec9d0" size={0.015} sizeAttenuation transparent opacity={0.86} depthWrite={false} />
     </points>
   );
 }
@@ -58,65 +90,244 @@ function GlobeOcclusion() {
   );
 }
 
-function NetworkLines() {
+function HeartbeatLine({ reducedMotion }: { reducedMotion: boolean }) {
   const geometry = useMemo(() => {
-    const vectors: number[] = [];
-    const origin = toSphere(destinations[0].longitude, destinations[0].latitude, 1).normalize();
-    for (const destination of destinations.slice(1)) {
-      const target = toSphere(destination.longitude, destination.latitude, 1).normalize();
-      const angle = origin.angleTo(target);
-      const steps = 52;
-      let previous: Vector3 | undefined;
-      for (let step = 0; step <= steps; step += 1) {
-        const t = step / steps;
-        const point = origin.clone().multiplyScalar(Math.sin((1 - t) * angle) / Math.sin(angle))
-          .add(target.clone().multiplyScalar(Math.sin(t * angle) / Math.sin(angle)));
-        point.normalize().multiplyScalar(radius + Math.sin(Math.PI * t) * 0.13);
-        if (previous) vectors.push(...previous.toArray(), ...point.toArray());
-        previous = point;
-      }
+    const segmentCount = 52;
+    const positions = new Float32Array(segmentCount * 2 * 3);
+    const colors = new Float32Array(segmentCount * 2 * 3);
+    const quietColor = new Color("#687780");
+
+    for (let segment = 0; segment < segmentCount; segment += 1) {
+      quietColor.toArray(colors, segment * 6);
+      quietColor.toArray(colors, segment * 6 + 3);
     }
+
     const next = new BufferGeometry();
-    next.setAttribute("position", new BufferAttribute(new Float32Array(vectors), 3));
+    next.setAttribute("position", new BufferAttribute(positions, 3));
+    next.setAttribute("color", new BufferAttribute(colors, 3));
     return next;
   }, []);
+  const quiet = useMemo(() => new Color("#687780"), []);
+  const signal = useMemo(() => new Color("#e0bd88"), []);
+  const positionScratch = useMemo(() => ({
+    start: new Vector3(),
+    end: new Vector3(),
+    from: new Vector3(),
+    to: new Vector3(),
+  }), []);
+  const activeDestination = useRef(-1);
+  const materialRef = useRef<import("three").LineBasicMaterial>(null);
+
+  useEffect(() => () => geometry.dispose(), [geometry]);
+
+  useFrame(({ clock }) => {
+    const material = materialRef.current;
+    if (!material) return;
+    if (reducedMotion) {
+      material.visible = false;
+      return;
+    }
+
+    const cycleTime = clock.elapsedTime % requestCycleDuration;
+    const slotIndex = Math.floor(cycleTime / requestSlotDuration);
+    const slotTime = cycleTime % requestSlotDuration;
+    const destinationIndex = slotIndex + 1;
+    const isVisible = slotTime < requestVisibleDuration;
+    let fade = 0;
+    if (slotTime < requestFadeInDuration) {
+      fade = smoothStep(slotTime / requestFadeInDuration);
+    } else if (slotTime < requestFadeInDuration + requestTravelDuration + requestSettleDuration) {
+      fade = 1;
+    } else if (isVisible) {
+      const fadeOutProgress = (slotTime - requestFadeInDuration - requestTravelDuration - requestSettleDuration) / requestFadeOutDuration;
+      fade = 1 - smoothStep(fadeOutProgress);
+    }
+    material.visible = isVisible && fade > 0;
+    material.opacity = fade * 0.48;
+
+    if (activeDestination.current !== destinationIndex) {
+      activeDestination.current = destinationIndex;
+      const destination = globeLocations[destinationIndex];
+      const { start, end, from, to } = positionScratch;
+      start.copy(toSphere(globeLocations[0].longitude, globeLocations[0].latitude, 1)).normalize();
+      end.copy(toSphere(destination.longitude, destination.latitude, 1)).normalize();
+      const positions = geometry.getAttribute("position") as BufferAttribute;
+      const values = positions.array as Float32Array;
+      const colors = geometry.getAttribute("color") as BufferAttribute;
+      const colorValues = colors.array as Float32Array;
+      const segments = values.length / 6;
+
+      for (let segment = 0; segment < segments; segment += 1) {
+        const fromProgress = segment / segments;
+        const toProgress = (segment + 1) / segments;
+        from.copy(start).lerp(end, fromProgress).normalize();
+        to.copy(start).lerp(end, toProgress).normalize();
+        from.multiplyScalar(radius + 0.045 + Math.sin(fromProgress * Math.PI) * 0.085);
+        to.multiplyScalar(radius + 0.045 + Math.sin(toProgress * Math.PI) * 0.085);
+        from.toArray(values, segment * 6);
+        to.toArray(values, segment * 6 + 3);
+        quiet.toArray(colorValues, segment * 6);
+        quiet.toArray(colorValues, segment * 6 + 3);
+      }
+      positions.needsUpdate = true;
+      colors.needsUpdate = true;
+    }
+
+    const signalTime = slotTime - requestFadeInDuration;
+    if (!isVisible || signalTime < 0 || signalTime > requestTravelDuration) return;
+    const colors = geometry.getAttribute("color") as BufferAttribute;
+    const values = colors.array as Float32Array;
+    const segments = values.length / 6;
+
+    for (let segment = 0; segment < segments; segment += 1) {
+      const progress = (segment + 0.5) / segments;
+      const arrival = progress * signalTravelDuration;
+      const intensity = Math.max(
+        pulseEnvelope(signalTime, arrival, 0.16),
+        pulseEnvelope(signalTime, arrival + 0.19, 0.15) * 0.84,
+      );
+      const mix = 0.16 + intensity * 0.84;
+      const offset = segment * 6;
+      for (let vertex = 0; vertex < 2; vertex += 1) {
+        const colorOffset = offset + vertex * 3;
+        values[colorOffset] = quiet.r + (signal.r - quiet.r) * mix;
+        values[colorOffset + 1] = quiet.g + (signal.g - quiet.g) * mix;
+        values[colorOffset + 2] = quiet.b + (signal.b - quiet.b) * mix;
+      }
+    }
+    colors.needsUpdate = true;
+  });
 
   return (
-    <lineSegments geometry={geometry}>
-      <lineBasicMaterial color="#869985" transparent opacity={0.47} depthWrite={false} />
+    <lineSegments geometry={geometry} renderOrder={1} frustumCulled={false}>
+      <lineBasicMaterial ref={materialRef} vertexColors transparent opacity={0} depthWrite={false} />
     </lineSegments>
   );
 }
 
-function GlobeMarkers() {
+function GlobeMarkers({ reducedMotion }: { reducedMotion: boolean }) {
+  const markerRefs = useRef<(Group | null)[]>([]);
+  const ringRefs = useRef<(Group | null)[]>([]);
+  const ringMaterials = useRef<(MeshBasicMaterial | null)[]>([]);
+  const ringOrientations = useMemo(
+    () => globeLocations.map(({ longitude, latitude }) => {
+      const normal = toSphere(longitude, latitude, 1).normalize();
+      return new Quaternion().setFromUnitVectors(new Vector3(0, 0, 1), normal);
+    }),
+    [],
+  );
+
+  useFrame(({ clock }) => {
+    const cycleTime = clock.elapsedTime % requestCycleDuration;
+    const slotIndex = Math.floor(cycleTime / requestSlotDuration);
+    const slotTime = cycleTime % requestSlotDuration;
+    const destinationIndex = slotIndex + 1;
+    globeLocations.forEach((_, index) => {
+      const marker = markerRefs.current[index];
+      const ring = ringRefs.current[index];
+      const ringMaterial = ringMaterials.current[index];
+      if (!marker || !ring || !ringMaterial) return;
+
+      if (reducedMotion) {
+        marker.scale.setScalar(1);
+        ring.scale.setScalar(1.1);
+        ringMaterial.opacity = index === 0 ? 0.045 : 0.075;
+        return;
+      }
+
+      const arrivalTime = requestFadeInDuration + requestTravelDuration;
+      const beatPhase = index === 0 && slotTime < 0.72
+        ? slotTime
+        : index === destinationIndex && slotTime >= arrivalTime
+          ? slotTime - arrivalTime
+          : -1;
+      if (beatPhase < 0) {
+        marker.scale.setScalar(1);
+        ring.scale.setScalar(1.1);
+        ringMaterial.opacity = 0;
+        return;
+      }
+
+      const firstBeat = pulseEnvelope(beatPhase, 0, 0.18);
+      const secondBeat = pulseEnvelope(beatPhase, 0.19, 0.17) * 0.86;
+      marker.scale.setScalar(1 + Math.max(firstBeat, secondBeat) * (index === 0 ? 0.095 : 0.12));
+
+      const firstRipple = beatPhase < 0.52 ? beatPhase / 0.52 : -1;
+      const secondRipple = beatPhase >= 0.19 && beatPhase < 0.71 ? (beatPhase - 0.19) / 0.52 : -1;
+      const ripple = firstRipple >= 0 && (secondRipple < 0 || firstRipple < secondRipple)
+        ? firstRipple
+        : secondRipple;
+      if (ripple < 0) {
+        marker.scale.setScalar(1);
+        ring.scale.setScalar(1.1);
+        ringMaterial.opacity = 0;
+      } else {
+        ringMaterial.opacity = (1 - smoothStep(ripple)) * (index === 0 ? 0.24 : 0.3);
+        ring.scale.setScalar(1.1 + smoothStep(ripple) * 1.8);
+      }
+    });
+  });
+
   return (
     <group>
-      {destinations.map((destination) => {
-        const position = toSphere(destination.longitude, destination.latitude, radius + 0.015);
-        return (
-          <group key={destination.label} position={position}>
-            {destination.primary && <mesh><sphereGeometry args={[0.064, 12, 12]} /><meshBasicMaterial color="#c7e8b0" transparent opacity={0.14} depthWrite={false} /></mesh>}
-            <mesh><sphereGeometry args={[destination.primary ? 0.025 : 0.015, 10, 10]} /><meshBasicMaterial color={destination.primary ? "#d9f6bf" : "#bdcfb7"} /></mesh>
+      {globeLocations.map((destination, index) => (
+        <group
+          key={destination.label}
+          ref={(node) => { markerRefs.current[index] = node; }}
+          position={toSphere(destination.longitude, destination.latitude, radius + 0.014)}
+          quaternion={ringOrientations[index]}
+        >
+          {destination.primary && (
+            <mesh>
+              <sphereGeometry args={[0.07, 12, 12]} />
+              <meshBasicMaterial color="#e5c995" transparent opacity={0.14} depthWrite={false} />
+            </mesh>
+          )}
+          <mesh>
+            <sphereGeometry args={[destination.primary ? 0.027 : 0.016, 10, 10]} />
+            <meshBasicMaterial color={destination.primary ? "#f0d7a4" : "#bdd9e6"} />
+          </mesh>
+          <group ref={(node) => { ringRefs.current[index] = node; }} position={[0, 0, 0.012]} scale={1.1}>
+            <mesh>
+            <ringGeometry args={[0.032, 0.036, 28]} />
+            <meshBasicMaterial
+              ref={(material) => { ringMaterials.current[index] = material; }}
+              color={destination.primary ? "#e0bd88" : "#9fc6d8"}
+              transparent
+              opacity={0.075}
+              depthWrite={false}
+              side={2}
+            />
+            </mesh>
           </group>
-        );
-      })}
+        </group>
+      ))}
     </group>
   );
 }
 
-type GlobeInteraction = {
-  beginDrag: () => void;
-  drag: (horizontal: number, vertical: number) => void;
-  endDrag: () => void;
-  rotate: (horizontal: number, vertical: number) => void;
-};
-
-function GlobeScene({ reducedMotion, interactionRef }: { reducedMotion: boolean; interactionRef: MutableRefObject<GlobeInteraction | null> }) {
+function GlobeScene({
+  interactionRef,
+  reducedMotion,
+  onReady,
+}: {
+  interactionRef: GlobeCanvasProps["interactionRef"];
+  reducedMotion: boolean;
+  onReady: GlobeCanvasProps["onReady"];
+}) {
   const group = useRef<Group>(null);
+  const dragging = useRef(false);
+  const inputRegistered = useRef(false);
+  const firstFrameRendered = useRef(false);
+  const reportedReady = useRef(false);
+  const orientation = useRef({ horizontal: -0.42, vertical: -0.08 });
   const { size, invalidate } = useThree();
   const mobile = size.width < 560;
-  const orientation = useRef({ horizontal: -0.42, vertical: -0.08 });
-  const dragging = useRef(false);
+  const reportReady = useCallback(() => {
+    if (!inputRegistered.current || !firstFrameRendered.current || reportedReady.current) return;
+    reportedReady.current = true;
+    onReady();
+  }, [onReady]);
 
   useEffect(() => {
     interactionRef.current = {
@@ -129,7 +340,7 @@ function GlobeScene({ reducedMotion, interactionRef }: { reducedMotion: boolean;
       },
       drag: (horizontal, vertical) => {
         orientation.current.horizontal += horizontal;
-        orientation.current.vertical = MathUtils.clamp(orientation.current.vertical + vertical, -0.52, 0.52);
+        orientation.current.vertical = MathUtils.clamp(orientation.current.vertical + vertical, -0.48, 0.48);
         if (group.current) {
           group.current.rotation.y = orientation.current.horizontal;
           group.current.rotation.x = orientation.current.vertical;
@@ -139,7 +350,7 @@ function GlobeScene({ reducedMotion, interactionRef }: { reducedMotion: boolean;
       endDrag: () => { dragging.current = false; },
       rotate: (horizontal, vertical) => {
         orientation.current.horizontal += horizontal;
-        orientation.current.vertical = MathUtils.clamp(orientation.current.vertical + vertical, -0.52, 0.52);
+        orientation.current.vertical = MathUtils.clamp(orientation.current.vertical + vertical, -0.48, 0.48);
         if (group.current) {
           group.current.rotation.y = orientation.current.horizontal;
           group.current.rotation.x = orientation.current.vertical;
@@ -147,35 +358,41 @@ function GlobeScene({ reducedMotion, interactionRef }: { reducedMotion: boolean;
         invalidate();
       },
     };
-    return () => { interactionRef.current = null; };
-  }, [interactionRef, invalidate]);
+    inputRegistered.current = true;
+    reportReady();
+    return () => {
+      inputRegistered.current = false;
+      interactionRef.current = null;
+    };
+  }, [interactionRef, invalidate, reportReady]);
 
   useFrame((state, delta) => {
-    if (!group.current || reducedMotion || dragging.current) return;
-    orientation.current.horizontal += delta * 0.018;
-    const targetHorizontal = orientation.current.horizontal + state.pointer.x * 0.09;
-    const targetVertical = MathUtils.clamp(orientation.current.vertical + state.pointer.y * 0.045, -0.58, 0.58);
-    group.current.rotation.y = MathUtils.damp(group.current.rotation.y, targetHorizontal, 5, delta);
-    group.current.rotation.x = MathUtils.damp(group.current.rotation.x, targetVertical, 5, delta);
+    if (!group.current) return;
+    firstFrameRendered.current = true;
+    reportReady();
+    if (reducedMotion || dragging.current) return;
+    orientation.current.horizontal += delta * 0.07;
+    const targetHorizontal = orientation.current.horizontal + state.pointer.x * 0.065;
+    const targetVertical = MathUtils.clamp(orientation.current.vertical + state.pointer.y * 0.035, -0.54, 0.54);
+    group.current.rotation.y = MathUtils.damp(group.current.rotation.y, targetHorizontal, 4, delta);
+    group.current.rotation.x = MathUtils.damp(group.current.rotation.x, targetVertical, 4, delta);
   });
 
   return (
-    <group ref={group} rotation={[-0.08, -0.42, -0.04]}>
+    <group ref={group} rotation={[-0.08, -0.42, 0]}>
       <GlobeOcclusion />
       <LandPoints mobile={mobile} />
-      <NetworkLines />
-      <GlobeMarkers />
+      <HeartbeatLine reducedMotion={reducedMotion} />
+      <GlobeMarkers reducedMotion={reducedMotion} />
     </group>
   );
 }
 
-export function GlobeCanvas() {
-  const [lost, setLost] = useState(false);
+export function GlobeCanvas({ interactionRef, isVisible, onReady, onError }: GlobeCanvasProps) {
+  const [contextLost, setContextLost] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(() =>
     typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
-  const interactionRef = useRef<GlobeInteraction | null>(null);
-  const dragState = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -185,75 +402,27 @@ export function GlobeCanvas() {
     return () => query.removeEventListener("change", update);
   }, []);
 
-  if (lost) return <GlobeFallback />;
+  if (contextLost) return <GlobeFallback />;
 
   return (
-    <div
-      className="globe-interaction"
-      role="group"
-      aria-label="Interactive point map of the world, centered on Istanbul"
-      onPointerDown={(event) => {
-        if (event.button !== 0 || (event.target instanceof HTMLElement && event.target.closest("button"))) return;
-        dragState.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
-        interactionRef.current?.beginDrag();
-        event.currentTarget.setPointerCapture(event.pointerId);
-      }}
-      onPointerMove={(event) => {
-        const drag = dragState.current;
-        if (!drag || drag.pointerId !== event.pointerId) return;
-        interactionRef.current?.drag((event.clientX - drag.x) * 0.004, (event.clientY - drag.y) * 0.0035);
-        drag.x = event.clientX;
-        drag.y = event.clientY;
-      }}
-      onPointerUp={(event) => {
-        if (dragState.current?.pointerId === event.pointerId) {
-          dragState.current = null;
-          interactionRef.current?.endDrag();
-        }
-      }}
-      onPointerCancel={() => {
-        dragState.current = null;
-        interactionRef.current?.endDrag();
-      }}
-      onKeyDown={(event) => {
-        const movement = 0.12;
-        if (event.key === "ArrowLeft" || event.key === "ArrowRight" || event.key === "ArrowUp" || event.key === "ArrowDown") {
+    <Canvas
+      className="globe-canvas"
+      aria-hidden="true"
+      role="presentation"
+      dpr={[1, 1.4]}
+      camera={{ position: [0, 0, 8], fov: 40, near: 0.1, far: 40 }}
+      gl={{ alpha: true, antialias: true, powerPreference: "low-power" }}
+      frameloop={reducedMotion || !isVisible ? "demand" : "always"}
+      fallback={<GlobeFallback />}
+      onCreated={({ gl }) => {
+        gl.domElement.addEventListener("webglcontextlost", (event) => {
           event.preventDefault();
-          interactionRef.current?.rotate(
-            event.key === "ArrowLeft" ? movement : event.key === "ArrowRight" ? -movement : 0,
-            event.key === "ArrowUp" ? -movement : event.key === "ArrowDown" ? movement : 0,
-          );
-        }
+          setContextLost(true);
+          onError(new Error("The WebGL context was lost."));
+        }, { once: true });
       }}
-      tabIndex={0}
-      aria-describedby="globe-description"
     >
-      <span className="sr-only" id="globe-description">Drag in either direction to rotate the globe, or use the arrow keys when the map is focused. The highlighted point marks Istanbul, with routes to London, Berlin, San Francisco, and Tokyo.</span>
-      <Canvas
-        aria-hidden="true"
-        role="presentation"
-        dpr={[1, 1.5]}
-        camera={{ position: [0, 0, 8], fov: 36 }}
-        gl={{ alpha: true, antialias: true, powerPreference: "low-power" }}
-        frameloop={reducedMotion ? "demand" : "always"}
-        onCreated={({ gl }) => {
-          const canvas = gl.domElement;
-          const handleContextLost = (event: Event) => {
-            event.preventDefault();
-            setLost(true);
-          };
-          canvas.addEventListener("webglcontextlost", handleContextLost, { once: true });
-        }}
-        fallback={<GlobeFallback />}
-      >
-        <GlobeScene reducedMotion={reducedMotion} interactionRef={interactionRef} />
-      </Canvas>
-      <div className="globe-controls" aria-label="Rotate the globe">
-        <button type="button" aria-label="Rotate globe left" onClick={() => interactionRef.current?.rotate(0.18, 0)}>←</button>
-        <button type="button" aria-label="Rotate globe right" onClick={() => interactionRef.current?.rotate(-0.18, 0)}>→</button>
-        <button type="button" aria-label="Tilt globe up" onClick={() => interactionRef.current?.rotate(0, -0.16)}>↑</button>
-        <button type="button" aria-label="Tilt globe down" onClick={() => interactionRef.current?.rotate(0, 0.16)}>↓</button>
-      </div>
-    </div>
+      <GlobeScene interactionRef={interactionRef} reducedMotion={reducedMotion} onReady={onReady} />
+    </Canvas>
   );
 }

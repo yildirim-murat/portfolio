@@ -1,11 +1,8 @@
 node_modules/
 .next/
 out/
+build/
 .cache/
-coverage/
-test-results/
-playwright-report/
 *.tsbuildinfo
 .env*
 !.env.example
-next-env.d.ts

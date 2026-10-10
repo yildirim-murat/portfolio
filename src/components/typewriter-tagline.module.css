@@ -1,0 +1,53 @@
+.root {
+  display: grid;
+  width: 100%;
+}
+
+.screenReaderText,
+.measure,
+.visualText {
+  grid-area: 1 / 1;
+}
+
+.screenReaderText {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.measure {
+  visibility: hidden;
+  user-select: none;
+}
+
+.visualText {
+  user-select: none;
+}
+
+.word {
+  white-space: nowrap;
+}
+
+.character {
+  opacity: 0;
+  animation: character-reveal 1ms steps(1, end) forwards;
+}
+
+@keyframes character-reveal {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .character {
+    opacity: 1;
+    animation: none;
+  }
+}
