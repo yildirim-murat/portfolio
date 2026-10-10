@@ -1,6 +1,6 @@
 # Portfolio starter
 
-A minimal dark landing page built around an interactive point globe, with an accessible static fallback and the supplied brand mark.
+A dark landing page with an interactive point globe, an accessible static fallback, and the supplied brand mark. Production builds are static exports for Cloudflare Pages.
 
 ## Requirements
 
@@ -14,7 +14,11 @@ npm ci
 npm run dev
 ```
 
-Then open <http://localhost:3000>. For LAN preview, this development config allows `192.168.1.9`; update `allowedDevOrigins` in `next.config.ts` if the machine's LAN address changes. The production commands are `npm run build` and `npm run start`. Run `npm run lint` and `npm run typecheck` before sharing changes.
+Then open <http://localhost:3000>. For LAN preview, this development config allows `192.168.1.9`; update `allowedDevOrigins` in `next.config.ts` if the machine's LAN address changes. Run `npm run lint`, `npm run typecheck`, and `npm run build` before sharing changes. The build writes a static site to `out/`; optionally preview it with Python's built-in server using `python -m http.server 8000 --directory out`, then open <http://localhost:8000>. There is no Next.js production server in this deployment mode.
+
+## Cloudflare Pages
+
+Configure the project with the **Next.js (Static HTML Export)** preset, build command `npm run build`, and output directory `out`. This is equivalent to Cloudflare's documented `npx next build` command. Node.js 22.14 or newer is required; Cloudflare Pages currently defaults to Node.js 22.16. To pin a version explicitly, set `NODE_VERSION` in the Pages build environment.
 
 ## Project structure
 
