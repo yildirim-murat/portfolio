@@ -70,18 +70,25 @@
     <text x="660" y="391" fill="#8B9A9E" font-family="Arial, sans-serif" font-size="12">İhtiyaca göre model oluşturma</text>
 
     <circle cx="819" cy="553" r="116" fill="#F7FAFA" stroke="#E5EDEE" />
-    <circle cx="819" cy="553" r="88" fill="url(#core)" stroke="#C6DCE0" />
-    <circle cx="819" cy="553" r="60" fill="#F9FCFC" stroke="#D5E5E8" />
-    <g stroke="#8BAEB7" stroke-width="1.7" opacity=".88">
-      <path d="M775 526L798 539M797 498L808 527M839 500L831 529M865 529L840 540M780 578L804 566M815 583L815 572M851 581L835 566" />
-      <path d="M788 554L811 553M827 553L849 553M818 531L819 511M819 574L819 595" />
+    <circle cx="819" cy="553" r="91" fill="url(#core)" stroke="#C6DCE0" />
+    <path d="M753 505V601M819 482V624M885 505V601" stroke="#9AB8BE" stroke-width="1" stroke-dasharray="2 6" opacity=".62" />
+    <g stroke="#8BAEB7" stroke-width="1.5" opacity=".76">
+      <path d="M759 514L809 493M759 514L809 533M759 514L809 573M759 514L809 613" />
+      <path d="M759 553L809 493M759 553L809 533M759 553L809 573M759 553L809 613" />
+      <path d="M759 592L809 493M759 592L809 533M759 592L809 573M759 592L809 613" />
+      <path d="M829 493L879 514M829 493L879 553M829 493L879 592M829 533L879 514M829 533L879 553M829 533L879 592" />
+      <path d="M829 573L879 514M829 573L879 553M829 573L879 592M829 613L879 514M829 613L879 553M829 613L879 592" />
     </g>
     <g fill="#FDFEFE" stroke="#78A3AE" stroke-width="2">
-      <circle cx="774" cy="525" r="7" /><circle cx="797" cy="497" r="7" /><circle cx="840" cy="500" r="7" />
-      <circle cx="866" cy="529" r="7" /><circle cx="780" cy="579" r="7" /><circle cx="815" cy="596" r="7" />
-      <circle cx="852" cy="582" r="7" /><circle cx="819" cy="553" r="12" fill="#93B9C2" />
+      <circle cx="759" cy="514" r="6" /><circle cx="759" cy="553" r="6" /><circle cx="759" cy="592" r="6" />
+      <circle cx="819" cy="493" r="6" /><circle cx="819" cy="533" r="6" /><circle cx="819" cy="573" r="6" /><circle cx="819" cy="613" r="6" />
+      <circle cx="879" cy="514" r="6" /><circle cx="879" cy="553" r="6" /><circle cx="879" cy="592" r="6" />
     </g>
-    <circle cx="819" cy="553" r="3.5" fill="#FFFFFF" />
+    <g fill="#91B8C1">
+      <circle cx="759" cy="514" r="2" /><circle cx="759" cy="553" r="2" /><circle cx="759" cy="592" r="2" />
+      <circle cx="819" cy="493" r="2" /><circle cx="819" cy="533" r="2" /><circle cx="819" cy="573" r="2" /><circle cx="819" cy="613" r="2" />
+      <circle cx="879" cy="514" r="2" /><circle cx="879" cy="553" r="2" /><circle cx="879" cy="592" r="2" />
+    </g>
     <rect x="734" y="684" width="170" height="28" rx="14" fill="#F1F6F6" />
     <circle cx="750" cy="698" r="3" fill="#87ADB6" />
     <text x="762" y="702" fill="#6F858B" font-family="Arial, sans-serif" font-size="9" font-weight="700" letter-spacing=".7">EĞİTİM SÜRECİ</text>

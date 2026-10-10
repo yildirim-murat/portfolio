@@ -18,12 +18,13 @@ export function WayfinderJourney({ children, mascot }: WayfinderJourneyProps) {
     const stage = stageRef.current;
     const traveler = travelerRef.current;
     const about = stage?.querySelector<HTMLElement>(".about-screen");
-    const dashboard = stage?.querySelector<HTMLElement>(".dashboard-screen");
     const aiModel = stage?.querySelector<HTMLElement>(".ai-model-screen");
+    const publicSolutions = stage?.querySelector<HTMLElement>(".dashboard-screen");
     const mobileApp = stage?.querySelector<HTMLElement>(".mobile-app-screen");
     const bot = traveler?.querySelector<HTMLElement>(".wayfinder-bot");
-    if (!stage || !traveler || !about || !dashboard || !aiModel || !mobileApp || !bot) return;
+    if (!stage || !traveler || !about || !aiModel || !publicSolutions || !mobileApp || !bot) return;
 
+    const sections = [about, aiModel, publicSolutions, mobileApp];
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let frame = 0;
     let listening = false;
@@ -31,58 +32,45 @@ export function WayfinderJourney({ children, mascot }: WayfinderJourneyProps) {
     const update = () => {
       frame = 0;
       const stageRect = stage.getBoundingClientRect();
-      const aboutRect = about.getBoundingClientRect();
-      const dashboardRect = dashboard.getBoundingClientRect();
-      const aiModelRect = aiModel.getBoundingClientRect();
-      const mobileAppRect = mobileApp.getBoundingClientRect();
+      const sectionRects = sections.map((section) => section.getBoundingClientRect());
+      const sectionStyles = sections.map((section) => window.getComputedStyle(section));
       const botRect = bot.getBoundingClientRect();
-      const aboutStyle = window.getComputedStyle(about);
-      const dashboardStyle = window.getComputedStyle(dashboard);
-      const aiModelStyle = window.getComputedStyle(aiModel);
-      const mobileAppStyle = window.getComputedStyle(mobileApp);
-      const height = window.innerHeight;
-      const topInset = Math.max(28, Math.min(height * 0.05, 62));
-      const aboutDocumentTop = window.scrollY + aboutRect.top;
-      const dashboardDocumentTop = window.scrollY + dashboardRect.top;
-      const aiModelDocumentTop = window.scrollY + aiModelRect.top;
-      const mobileAppDocumentTop = window.scrollY + mobileAppRect.top;
-      const dashboardBottomInset = Math.max(
-        16,
-        Number.parseFloat(dashboardStyle.getPropertyValue("--wayfinder-safe-bottom")) || 0,
+      const viewportHeight = window.innerHeight;
+      const topInset = Math.max(28, Math.min(viewportHeight * 0.05, 62));
+      const mobileTopInset = Math.max(100, Math.min(132, viewportHeight * 0.15));
+      const bottomInset = sectionStyles.map((style) =>
+        Math.max(16, Number.parseFloat(style.getPropertyValue("--wayfinder-safe-bottom")) || 0),
       );
-      const aiModelBottomInset = Math.max(
-        16,
-        Number.parseFloat(aiModelStyle.getPropertyValue("--wayfinder-safe-bottom")) || 0,
-      );
-      const mobileTopInset = Math.max(100, Math.min(132, height * 0.15));
+      const paddingLeft = sectionStyles.map((style) => Number.parseFloat(style.paddingLeft) || 0);
+      const paddingRight = sectionStyles.map((style) => Number.parseFloat(style.paddingRight) || 0);
+      const sectionTops = sectionRects.map((rect) => window.scrollY + rect.top);
       const anchors = [
         {
-          x: aboutRect.right - stageRect.left - Number.parseFloat(aboutStyle.paddingRight) - botRect.width,
-          y: aboutRect.top - stageRect.top + topInset,
+          x: sectionRects[0].right - stageRect.left - paddingRight[0] - botRect.width,
+          y: sectionRects[0].top - stageRect.top + topInset,
         },
         {
-          x: dashboardRect.left - stageRect.left + Number.parseFloat(dashboardStyle.paddingLeft),
-          y: dashboardRect.bottom - stageRect.top - botRect.height - dashboardBottomInset,
+          x: sectionRects[1].left - stageRect.left + paddingLeft[1],
+          y: sectionRects[1].bottom - stageRect.top - botRect.height - bottomInset[1],
         },
         {
-          x: aiModelRect.right - stageRect.left - Number.parseFloat(aiModelStyle.paddingRight) - botRect.width,
-          y: aiModelRect.bottom - stageRect.top - botRect.height - aiModelBottomInset,
+          x: sectionRects[2].right - stageRect.left - paddingRight[2] - botRect.width,
+          y: sectionRects[2].bottom - stageRect.top - botRect.height - bottomInset[2],
         },
         {
-          x: mobileAppRect.left - stageRect.left + Number.parseFloat(mobileAppStyle.paddingLeft),
-          y: mobileAppRect.top - stageRect.top + mobileTopInset,
+          x: sectionRects[3].left - stageRect.left + paddingLeft[3],
+          y: sectionRects[3].top - stageRect.top + mobileTopInset,
         },
       ];
-      const sectionTops = [aboutDocumentTop, dashboardDocumentTop, aiModelDocumentTop, mobileAppDocumentTop];
-      const segment = window.scrollY < dashboardDocumentTop
-        ? 0
-        : window.scrollY < aiModelDocumentTop
-          ? 1
-          : 2;
-      const startTop = sectionTops[segment];
-      const endTop = sectionTops[segment + 1];
+
+      let segment = 0;
+      while (segment < anchors.length - 2 && window.scrollY >= sectionTops[segment + 1]) {
+        segment += 1;
+      }
+
       const sectionProgress = clamp(
-        (window.scrollY - startTop) / Math.max(1, endTop - startTop),
+        (window.scrollY - sectionTops[segment]) /
+          Math.max(1, sectionTops[segment + 1] - sectionTops[segment]),
         0,
         1,
       );
@@ -133,10 +121,7 @@ export function WayfinderJourney({ children, mascot }: WayfinderJourneyProps) {
         })
       : null;
     resizeObserver?.observe(stage);
-    resizeObserver?.observe(about);
-    resizeObserver?.observe(dashboard);
-    resizeObserver?.observe(aiModel);
-    resizeObserver?.observe(mobileApp);
+    sections.forEach((section) => resizeObserver?.observe(section));
     resizeObserver?.observe(bot);
 
     const handleMotionChange = () => schedule();

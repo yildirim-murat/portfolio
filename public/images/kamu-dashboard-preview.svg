@@ -11,6 +11,16 @@
     <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%" color-interpolation-filters="sRGB">
       <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#18303B" flood-opacity=".12" />
     </filter>
+    <style>
+      @keyframes chart-rise { from { opacity: .35; transform: scaleY(.72); } to { opacity: 1; transform: scaleY(1); } }
+      .chart-bar { transform-box: fill-box; transform-origin: center bottom; animation: chart-rise 720ms cubic-bezier(.2,.7,.25,1) both; }
+      .chart-bar:nth-of-type(2) { animation-delay: 70ms; }
+      .chart-bar:nth-of-type(3) { animation-delay: 130ms; }
+      .chart-bar:nth-of-type(4) { animation-delay: 190ms; }
+      .chart-bar:nth-of-type(5) { animation-delay: 250ms; }
+      .chart-radar { animation: chart-rise 650ms ease-out 120ms both; transform-box: fill-box; transform-origin: center; }
+      @media (prefers-reduced-motion: reduce) { .chart-bar, .chart-radar { animation: none; } }
+    </style>
   </defs>
 
   <g transform="scale(1.044444 1)">
@@ -63,7 +73,7 @@
     <circle cx="1380" cy="46" r="4" stroke="#66808A" stroke-width="1.5" />
 
     <text x="314" y="136" fill="#68838C" font-family="Arial, sans-serif" font-size="9" font-weight="700" letter-spacing=".18em">YÖNETİM VE KOORDİNASYON</text>
-    <text x="314" y="178" fill="#1C2B32" font-family="Arial, sans-serif" font-size="27" font-weight="600">Kamu Kurum Dashboard</text>
+    <text x="314" y="178" fill="#1C2B32" font-family="Arial, sans-serif" font-size="27" font-weight="600">Kamu Kurum Çözümleri</text>
     <text x="314" y="202" fill="#79888E" font-family="Arial, sans-serif" font-size="12">Kurum süreçleri için sade bir çalışma alanı</text>
     <rect x="1268" y="151" width="108" height="27" rx="13.5" fill="#EEF4F5" />
     <circle cx="1282" cy="164.5" r="3" fill="#77A9B6" />
@@ -93,49 +103,69 @@
     </g>
 
     <rect x="314" y="375" width="665" height="320" rx="11" fill="#FFFFFF" stroke="#E3E9EB" />
-    <text x="338" y="410" fill="#34464D" font-family="Arial, sans-serif" font-size="13" font-weight="600">Süreç görünümü</text>
-    <text x="338" y="430" fill="#9AA6AA" font-family="Arial, sans-serif" font-size="10">İş akışının genel görünümü</text>
+    <text x="338" y="410" fill="#34464D" font-family="Arial, sans-serif" font-size="13" font-weight="600">Süreç dağılımı</text>
+    <text x="338" y="430" fill="#9AA6AA" font-family="Arial, sans-serif" font-size="10">Temsili iş akışı görünümü</text>
     <rect x="850" y="394" width="102" height="26" rx="6" fill="#F5F7F8" />
-    <text x="865" y="411" fill="#77878D" font-family="Arial, sans-serif" font-size="9">Son dönem</text>
-    <path d="M346 634H949M346 580H949M346 526H949M346 472H949" stroke="#EDF0F1" />
-    <path d="M365 604C403 574 418 593 456 554C493 516 515 548 549 512C584 476 611 514 646 489C683 463 709 487 748 460C788 433 814 468 848 442C881 417 908 433 932 419" stroke="#86AEB9" stroke-width="3" stroke-linecap="round" />
-    <path d="M365 604C403 574 418 593 456 554C493 516 515 548 549 512C584 476 611 514 646 489C683 463 709 487 748 460C788 433 814 468 848 442C881 417 908 433 932 419V634H365V604Z" fill="#DCE9EC" opacity=".42" />
-    <circle cx="748" cy="460" r="5" fill="#FFFFFF" stroke="#739EAA" stroke-width="2.5" />
+    <text x="865" y="411" fill="#77878D" font-family="Arial, sans-serif" font-size="9">Örnek grafik</text>
+    <g stroke="#EDF0F1"><path d="M346 634H949M346 580H949M346 526H949M346 472H949" /></g>
+    <g fill="#D7E4E7">
+      <rect class="chart-bar" x="372" y="551" width="26" height="83" rx="5" />
+      <rect class="chart-bar" x="423" y="506" width="26" height="128" rx="5" />
+      <rect class="chart-bar" x="474" y="529" width="26" height="105" rx="5" />
+      <rect class="chart-bar" x="525" y="476" width="26" height="158" rx="5" />
+      <rect class="chart-bar" x="576" y="516" width="26" height="118" rx="5" />
+      <rect class="chart-bar" x="627" y="490" width="26" height="144" rx="5" />
+      <rect class="chart-bar" x="678" y="538" width="26" height="96" rx="5" />
+      <rect class="chart-bar" x="729" y="466" width="26" height="168" rx="5" />
+      <rect class="chart-bar" x="780" y="505" width="26" height="129" rx="5" />
+      <rect class="chart-bar" x="831" y="489" width="26" height="145" rx="5" />
+      <rect class="chart-bar" x="882" y="530" width="26" height="104" rx="5" />
+    </g>
+    <path d="M385 469H397M436 469H448M487 469H499M538 469H550M589 469H601M640 469H652M691 469H703M742 469H754M793 469H805M844 469H856M895 469H907" stroke="#83AAB4" stroke-width="3" stroke-linecap="round" />
     <g fill="#A4AFB3" font-family="Arial, sans-serif" font-size="8">
-      <text x="365" y="658">BAŞLANGIÇ</text><text x="542" y="658">SÜREÇ</text><text x="717" y="658">İŞLEM</text><text x="884" y="658">SONUÇ</text>
+      <text x="366" y="658">KAYIT</text><text x="520" y="658">İNCELEME</text><text x="679" y="658">İŞLEM</text><text x="838" y="658">TAMAMLAMA</text>
     </g>
 
     <rect x="1001" y="375" width="375" height="320" rx="11" fill="#FFFFFF" stroke="#E3E9EB" />
-    <text x="1025" y="410" fill="#34464D" font-family="Arial, sans-serif" font-size="13" font-weight="600">İşlem adımları</text>
-    <text x="1025" y="430" fill="#9AA6AA" font-family="Arial, sans-serif" font-size="10">Örnek süreç akışı</text>
-    <path d="M1041 467V643" stroke="#DFE7E9" stroke-width="1.5" />
-    <g>
-      <circle cx="1041" cy="474" r="7" fill="#E7F0F2" stroke="#9DBAC2" />
-      <circle cx="1041" cy="522" r="7" fill="#E7F0F2" stroke="#9DBAC2" />
-      <circle cx="1041" cy="570" r="7" fill="#E7F0F2" stroke="#9DBAC2" />
-      <circle cx="1041" cy="618" r="7" fill="#E7F0F2" stroke="#9DBAC2" />
-    </g>
-    <g fill="#68787E" font-family="Arial, sans-serif" font-size="10" font-weight="600">
-      <text x="1060" y="472">Kayıt oluşturma</text><text x="1060" y="520">İnceleme</text><text x="1060" y="568">Değerlendirme</text><text x="1060" y="616">Tamamlama</text>
-    </g>
-    <g fill="#CCD6D9">
-      <rect x="1060" y="480" width="170" height="4" rx="2" /><rect x="1060" y="528" width="198" height="4" rx="2" />
-      <rect x="1060" y="576" width="155" height="4" rx="2" /><rect x="1060" y="624" width="182" height="4" rx="2" />
+    <text x="1025" y="410" fill="#34464D" font-family="Arial, sans-serif" font-size="13" font-weight="600">Birim dağılımı</text>
+    <text x="1025" y="430" fill="#9AA6AA" font-family="Arial, sans-serif" font-size="10">Temsili kayıt oranları</text>
+    <path d="M1188 470A72 72 0 0 1 1243 588L1188 542Z" fill="#91B5BE" />
+    <path d="M1243 588A72 72 0 0 1 1118 570L1188 542Z" fill="#D4E2E5" />
+    <path d="M1118 570A72 72 0 0 1 1188 470L1188 542Z" fill="#EAF0F1" />
+    <circle cx="1188" cy="542" r="34" fill="#FFFFFF" />
+    <text x="1188" y="539" text-anchor="middle" fill="#758990" font-family="Arial, sans-serif" font-size="8" font-weight="700" letter-spacing=".08em">ÖRNEK</text>
+    <text x="1188" y="553" text-anchor="middle" fill="#34464D" font-family="Arial, sans-serif" font-size="10" font-weight="600">Kayıtlar</text>
+    <g fill="#75868C" font-family="Arial, sans-serif" font-size="8">
+      <circle cx="1040" cy="636" r="4" fill="#91B5BE" /><text x="1050" y="639">Başvuru</text>
+      <circle cx="1132" cy="636" r="4" fill="#D4E2E5" /><text x="1142" y="639">İnceleme</text>
+      <circle cx="1234" cy="636" r="4" fill="#EAF0F1" stroke="#D2DEE1" /><text x="1244" y="639">Diğer</text>
     </g>
 
     <rect x="314" y="719" width="1062" height="166" rx="11" fill="#FFFFFF" stroke="#E3E9EB" />
-    <text x="338" y="754" fill="#34464D" font-family="Arial, sans-serif" font-size="13" font-weight="600">Kayıt listesi</text>
-    <text x="338" y="773" fill="#9AA6AA" font-family="Arial, sans-serif" font-size="10">Örnek tablo düzeni</text>
-    <path d="M338 793H1352" stroke="#E9EDEF" />
+    <text x="338" y="754" fill="#34464D" font-family="Arial, sans-serif" font-size="13" font-weight="600">Kayıt görünümü</text>
+    <text x="338" y="773" fill="#9AA6AA" font-family="Arial, sans-serif" font-size="10">Örnek satır düzeni</text>
+    <path d="M338 793H914M938 736V868" stroke="#E9EDEF" />
     <g fill="#9AA6AA" font-family="Arial, sans-serif" font-size="8" font-weight="700" letter-spacing=".08em">
-      <text x="340" y="811">KAYIT</text><text x="728" y="811">BİRİM</text><text x="1006" y="811">DURUM</text><text x="1208" y="811">İŞLEM</text>
+      <text x="340" y="811">KAYIT</text><text x="568" y="811">BİRİM</text><text x="744" y="811">DURUM</text>
     </g>
-    <path d="M338 822H1352M338 851H1352" stroke="#EFF2F3" />
+    <path d="M338 822H914M338 851H914" stroke="#EFF2F3" />
     <g fill="#D7E0E2">
-      <rect x="340" y="831" width="179" height="6" rx="3" /><rect x="728" y="831" width="115" height="6" rx="3" />
-      <rect x="1006" y="830" width="62" height="8" rx="4" fill="#EAF1F2" /><rect x="1208" y="831" width="88" height="6" rx="3" />
-      <rect x="340" y="861" width="151" height="6" rx="3" /><rect x="728" y="861" width="136" height="6" rx="3" />
-      <rect x="1006" y="860" width="62" height="8" rx="4" fill="#EAF1F2" /><rect x="1208" y="861" width="71" height="6" rx="3" />
+      <rect x="340" y="831" width="168" height="6" rx="3" /><rect x="568" y="831" width="98" height="6" rx="3" />
+      <rect x="744" y="830" width="62" height="8" rx="4" fill="#EAF1F2" />
+      <rect x="340" y="861" width="143" height="6" rx="3" /><rect x="568" y="861" width="118" height="6" rx="3" />
+      <rect x="744" y="860" width="62" height="8" rx="4" fill="#EAF1F2" />
+    </g>
+    <text x="970" y="754" fill="#34464D" font-family="Arial, sans-serif" font-size="11" font-weight="600">İş yükü dengesi</text>
+    <g stroke="#E8EDEF" stroke-width="1"><path d="M1168 763L1212 795L1195 850H1141L1124 795Z" /><path d="M1168 775L1196 795L1185 832H1151L1140 795Z" /><path d="M1168 787L1180 795L1175 814H1161L1156 795Z" /></g>
+    <g class="chart-radar">
+      <path d="M1168 778L1202 795L1187 837L1150 824L1137 790Z" fill="#B7D0D5" fill-opacity=".42" stroke="#7EA8B2" stroke-width="2" />
+      <circle cx="1168" cy="778" r="3" fill="#6F9BA6" /><circle cx="1202" cy="795" r="3" fill="#6F9BA6" />
+      <circle cx="1187" cy="837" r="3" fill="#6F9BA6" /><circle cx="1150" cy="824" r="3" fill="#6F9BA6" />
+      <circle cx="1137" cy="790" r="3" fill="#6F9BA6" />
+    </g>
+    <g fill="#829096" font-family="Arial, sans-serif" font-size="7">
+      <text x="1151" y="757">TAKİP</text><text x="1217" y="798">KAYIT</text><text x="1180" y="862">İNCELEME</text>
+      <text x="1091" y="833">İŞLEM</text><text x="1091" y="785">DENGE</text>
     </g>
   </g>
   </g>

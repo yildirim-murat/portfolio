@@ -23,16 +23,52 @@ export type GlobeCanvasProps = {
 };
 
 const radius = 2.2;
+const requestLaneCount = 3;
 const requestFadeInDuration = 0.22;
-const requestTravelDuration = 1.25;
+const requestTravelDuration = 1.15;
 const requestSettleDuration = 0.28;
 const requestFadeOutDuration = 0.65;
 const requestGapDuration = 0.55;
 const requestVisibleDuration = requestFadeInDuration + requestTravelDuration + requestSettleDuration + requestFadeOutDuration;
 const requestSlotDuration = requestVisibleDuration + requestGapDuration;
-const signalTravelDuration = 0.86;
+const requestLaneStagger = requestSlotDuration / requestLaneCount;
+const signalTravelDuration = 0.9;
 const requestDestinationCount = globeLocations.length - 1;
-const requestCycleDuration = requestSlotDuration * requestDestinationCount;
+
+type RequestLaneState = {
+  destinationIndex: number;
+  slotTime: number;
+  fade: number;
+};
+
+function createRequestLaneState(): RequestLaneState {
+  return { destinationIndex: -1, slotTime: -1, fade: 0 };
+}
+
+function updateRequestLane(elapsedTime: number, laneIndex: number, state: RequestLaneState) {
+  const latestEvent = Math.floor(elapsedTime / requestLaneStagger);
+  const eventsSinceLane = ((latestEvent - laneIndex) % requestLaneCount + requestLaneCount) % requestLaneCount;
+  const laneEvent = latestEvent - eventsSinceLane;
+  if (laneEvent < laneIndex) {
+    state.destinationIndex = -1;
+    state.slotTime = -1;
+    state.fade = 0;
+    return;
+  }
+
+  state.destinationIndex = (laneEvent % requestDestinationCount) + 1;
+  state.slotTime = elapsedTime - laneEvent * requestLaneStagger;
+  if (state.slotTime < requestFadeInDuration) {
+    state.fade = smoothStep(state.slotTime / requestFadeInDuration);
+  } else if (state.slotTime < requestFadeInDuration + requestTravelDuration + requestSettleDuration) {
+    state.fade = 1;
+  } else if (state.slotTime < requestVisibleDuration) {
+    const fadeOutProgress = (state.slotTime - requestFadeInDuration - requestTravelDuration - requestSettleDuration) / requestFadeOutDuration;
+    state.fade = 1 - smoothStep(fadeOutProgress);
+  } else {
+    state.fade = 0;
+  }
+}
 
 function pulseEnvelope(time: number, start: number, duration: number) {
   const progress = (time - start) / duration;
@@ -90,8 +126,8 @@ function GlobeOcclusion() {
   );
 }
 
-function HeartbeatLine({ reducedMotion }: { reducedMotion: boolean }) {
-  const geometry = useMemo(() => {
+function HeartbeatLines({ reducedMotion }: { reducedMotion: boolean }) {
+  const geometries = useMemo(() => Array.from({ length: requestLaneCount }, () => {
     const segmentCount = 52;
     const positions = new Float32Array(segmentCount * 2 * 3);
     const colors = new Float32Array(segmentCount * 2 * 3);
@@ -106,102 +142,108 @@ function HeartbeatLine({ reducedMotion }: { reducedMotion: boolean }) {
     next.setAttribute("position", new BufferAttribute(positions, 3));
     next.setAttribute("color", new BufferAttribute(colors, 3));
     return next;
-  }, []);
+  }), []);
   const quiet = useMemo(() => new Color("#687780"), []);
   const signal = useMemo(() => new Color("#e0bd88"), []);
-  const positionScratch = useMemo(() => ({
+  const positionScratch = useMemo(() => Array.from({ length: requestLaneCount }, () => ({
     start: new Vector3(),
     end: new Vector3(),
     from: new Vector3(),
     to: new Vector3(),
-  }), []);
-  const activeDestination = useRef(-1);
-  const materialRef = useRef<import("three").LineBasicMaterial>(null);
+  })), []);
+  const activeDestinations = useRef<number[]>(Array.from({ length: requestLaneCount }, () => -1));
+  const materialRefs = useRef<(import("three").LineBasicMaterial | null)[]>([]);
+  const laneStates = useMemo(() => Array.from({ length: requestLaneCount }, createRequestLaneState), []);
 
-  useEffect(() => () => geometry.dispose(), [geometry]);
+  useEffect(() => () => geometries.forEach((geometry) => geometry.dispose()), [geometries]);
 
   useFrame(({ clock }) => {
-    const material = materialRef.current;
-    if (!material) return;
-    if (reducedMotion) {
-      material.visible = false;
-      return;
-    }
+    for (let lane = 0; lane < requestLaneCount; lane += 1) {
+      const geometry = geometries[lane];
+      const material = materialRefs.current[lane];
+      const laneState = laneStates[lane];
+      if (!geometry || !material) continue;
+      if (reducedMotion) {
+        material.visible = false;
+        continue;
+      }
 
-    const cycleTime = clock.elapsedTime % requestCycleDuration;
-    const slotIndex = Math.floor(cycleTime / requestSlotDuration);
-    const slotTime = cycleTime % requestSlotDuration;
-    const destinationIndex = slotIndex + 1;
-    const isVisible = slotTime < requestVisibleDuration;
-    let fade = 0;
-    if (slotTime < requestFadeInDuration) {
-      fade = smoothStep(slotTime / requestFadeInDuration);
-    } else if (slotTime < requestFadeInDuration + requestTravelDuration + requestSettleDuration) {
-      fade = 1;
-    } else if (isVisible) {
-      const fadeOutProgress = (slotTime - requestFadeInDuration - requestTravelDuration - requestSettleDuration) / requestFadeOutDuration;
-      fade = 1 - smoothStep(fadeOutProgress);
-    }
-    material.visible = isVisible && fade > 0;
-    material.opacity = fade * 0.48;
+      updateRequestLane(clock.elapsedTime, lane, laneState);
+      const { destinationIndex, slotTime, fade } = laneState;
+      const isVisible = slotTime >= 0 && slotTime < requestVisibleDuration && fade > 0;
+      material.visible = isVisible;
+      material.opacity = fade * 0.48;
 
-    if (activeDestination.current !== destinationIndex) {
-      activeDestination.current = destinationIndex;
-      const destination = globeLocations[destinationIndex];
-      const { start, end, from, to } = positionScratch;
-      start.copy(toSphere(globeLocations[0].longitude, globeLocations[0].latitude, 1)).normalize();
-      end.copy(toSphere(destination.longitude, destination.latitude, 1)).normalize();
-      const positions = geometry.getAttribute("position") as BufferAttribute;
-      const values = positions.array as Float32Array;
+      if (destinationIndex >= 0 && activeDestinations.current[lane] !== destinationIndex) {
+        activeDestinations.current[lane] = destinationIndex;
+        const destination = globeLocations[destinationIndex];
+        const { start, end, from, to } = positionScratch[lane];
+        start.copy(toSphere(globeLocations[0].longitude, globeLocations[0].latitude, 1)).normalize();
+        end.copy(toSphere(destination.longitude, destination.latitude, 1)).normalize();
+        const positions = geometry.getAttribute("position") as BufferAttribute;
+        const values = positions.array as Float32Array;
+        const colors = geometry.getAttribute("color") as BufferAttribute;
+        const colorValues = colors.array as Float32Array;
+        const segments = values.length / 6;
+
+        for (let segment = 0; segment < segments; segment += 1) {
+          const fromProgress = segment / segments;
+          const toProgress = (segment + 1) / segments;
+          from.copy(start).lerp(end, fromProgress).normalize();
+          to.copy(start).lerp(end, toProgress).normalize();
+          from.multiplyScalar(radius + 0.045 + Math.sin(fromProgress * Math.PI) * 0.085);
+          to.multiplyScalar(radius + 0.045 + Math.sin(toProgress * Math.PI) * 0.085);
+          from.toArray(values, segment * 6);
+          to.toArray(values, segment * 6 + 3);
+          quiet.toArray(colorValues, segment * 6);
+          quiet.toArray(colorValues, segment * 6 + 3);
+        }
+        positions.needsUpdate = true;
+        colors.needsUpdate = true;
+      }
+
+      const signalTime = slotTime - requestFadeInDuration;
       const colors = geometry.getAttribute("color") as BufferAttribute;
-      const colorValues = colors.array as Float32Array;
+      const values = colors.array as Float32Array;
       const segments = values.length / 6;
 
       for (let segment = 0; segment < segments; segment += 1) {
-        const fromProgress = segment / segments;
-        const toProgress = (segment + 1) / segments;
-        from.copy(start).lerp(end, fromProgress).normalize();
-        to.copy(start).lerp(end, toProgress).normalize();
-        from.multiplyScalar(radius + 0.045 + Math.sin(fromProgress * Math.PI) * 0.085);
-        to.multiplyScalar(radius + 0.045 + Math.sin(toProgress * Math.PI) * 0.085);
-        from.toArray(values, segment * 6);
-        to.toArray(values, segment * 6 + 3);
-        quiet.toArray(colorValues, segment * 6);
-        quiet.toArray(colorValues, segment * 6 + 3);
+        const progress = (segment + 0.5) / segments;
+        const arrival = progress * signalTravelDuration;
+        const intensity = signalTime >= 0 && signalTime <= requestTravelDuration
+          ? Math.max(
+            pulseEnvelope(signalTime, arrival, 0.16),
+            pulseEnvelope(signalTime, arrival + 0.19, 0.15) * 0.84,
+          )
+          : 0;
+        const mix = 0.16 + intensity * 0.84;
+        const offset = segment * 6;
+        for (let vertex = 0; vertex < 2; vertex += 1) {
+          const colorOffset = offset + vertex * 3;
+          values[colorOffset] = quiet.r + (signal.r - quiet.r) * mix;
+          values[colorOffset + 1] = quiet.g + (signal.g - quiet.g) * mix;
+          values[colorOffset + 2] = quiet.b + (signal.b - quiet.b) * mix;
+        }
       }
-      positions.needsUpdate = true;
       colors.needsUpdate = true;
     }
-
-    const signalTime = slotTime - requestFadeInDuration;
-    if (!isVisible || signalTime < 0 || signalTime > requestTravelDuration) return;
-    const colors = geometry.getAttribute("color") as BufferAttribute;
-    const values = colors.array as Float32Array;
-    const segments = values.length / 6;
-
-    for (let segment = 0; segment < segments; segment += 1) {
-      const progress = (segment + 0.5) / segments;
-      const arrival = progress * signalTravelDuration;
-      const intensity = Math.max(
-        pulseEnvelope(signalTime, arrival, 0.16),
-        pulseEnvelope(signalTime, arrival + 0.19, 0.15) * 0.84,
-      );
-      const mix = 0.16 + intensity * 0.84;
-      const offset = segment * 6;
-      for (let vertex = 0; vertex < 2; vertex += 1) {
-        const colorOffset = offset + vertex * 3;
-        values[colorOffset] = quiet.r + (signal.r - quiet.r) * mix;
-        values[colorOffset + 1] = quiet.g + (signal.g - quiet.g) * mix;
-        values[colorOffset + 2] = quiet.b + (signal.b - quiet.b) * mix;
-      }
-    }
-    colors.needsUpdate = true;
   });
 
   return (
-    <lineSegments geometry={geometry} renderOrder={1} frustumCulled={false}>
-      <lineBasicMaterial ref={materialRef} vertexColors transparent opacity={0} depthWrite={false} />
-    </lineSegments>
+    <group>
+      {geometries.map((geometry, lane) => (
+        <lineSegments key={lane} geometry={geometry} renderOrder={1} frustumCulled={false}>
+          <lineBasicMaterial
+            ref={(material) => { materialRefs.current[lane] = material; }}
+            vertexColors
+            transparent
+            opacity={0}
+            depthWrite={false}
+            visible={false}
+          />
+        </lineSegments>
+      ))}
+    </group>
   );
 }
 
@@ -216,12 +258,12 @@ function GlobeMarkers({ reducedMotion }: { reducedMotion: boolean }) {
     }),
     [],
   );
+  const laneStates = useMemo(() => Array.from({ length: requestLaneCount }, createRequestLaneState), []);
 
   useFrame(({ clock }) => {
-    const cycleTime = clock.elapsedTime % requestCycleDuration;
-    const slotIndex = Math.floor(cycleTime / requestSlotDuration);
-    const slotTime = cycleTime % requestSlotDuration;
-    const destinationIndex = slotIndex + 1;
+    for (let lane = 0; lane < requestLaneCount; lane += 1) {
+      updateRequestLane(clock.elapsedTime, lane, laneStates[lane]);
+    }
     globeLocations.forEach((_, index) => {
       const marker = markerRefs.current[index];
       const ring = ringRefs.current[index];
@@ -235,36 +277,40 @@ function GlobeMarkers({ reducedMotion }: { reducedMotion: boolean }) {
         return;
       }
 
+      let beatStrength = 0;
+      let rippleOpacity = 0;
+      let rippleScale = 1.1;
       const arrivalTime = requestFadeInDuration + requestTravelDuration;
-      const beatPhase = index === 0 && slotTime < 0.72
-        ? slotTime
-        : index === destinationIndex && slotTime >= arrivalTime
-          ? slotTime - arrivalTime
-          : -1;
-      if (beatPhase < 0) {
+      for (const laneState of laneStates) {
+        const { destinationIndex, slotTime } = laneState;
+        const isDeparture = index === 0 && slotTime >= 0 && slotTime < 0.72;
+        const isArrival = index === destinationIndex && slotTime >= arrivalTime && slotTime < arrivalTime + 0.71;
+        if (!isDeparture && !isArrival) continue;
+        const beatPhase = isDeparture ? slotTime : slotTime - arrivalTime;
+        const firstBeat = pulseEnvelope(beatPhase, 0, 0.18);
+        const secondBeat = pulseEnvelope(beatPhase, 0.19, 0.17) * 0.86;
+        beatStrength = Math.max(beatStrength, firstBeat, secondBeat);
+
+        const firstRipple = beatPhase < 0.52 ? beatPhase / 0.52 : -1;
+        const secondRipple = beatPhase >= 0.19 && beatPhase < 0.71 ? (beatPhase - 0.19) / 0.52 : -1;
+        const ripple = firstRipple >= 0 && (secondRipple < 0 || firstRipple < secondRipple)
+          ? firstRipple
+          : secondRipple;
+        if (ripple >= 0) {
+          rippleOpacity = Math.max(rippleOpacity, (1 - smoothStep(ripple)) * (index === 0 ? 0.24 : 0.3));
+          rippleScale = Math.max(rippleScale, 1.1 + smoothStep(ripple) * 2.2);
+        }
+      }
+
+      if (beatStrength === 0 && rippleOpacity === 0) {
         marker.scale.setScalar(1);
         ring.scale.setScalar(1.1);
         ringMaterial.opacity = 0;
         return;
       }
-
-      const firstBeat = pulseEnvelope(beatPhase, 0, 0.18);
-      const secondBeat = pulseEnvelope(beatPhase, 0.19, 0.17) * 0.86;
-      marker.scale.setScalar(1 + Math.max(firstBeat, secondBeat) * (index === 0 ? 0.095 : 0.12));
-
-      const firstRipple = beatPhase < 0.52 ? beatPhase / 0.52 : -1;
-      const secondRipple = beatPhase >= 0.19 && beatPhase < 0.71 ? (beatPhase - 0.19) / 0.52 : -1;
-      const ripple = firstRipple >= 0 && (secondRipple < 0 || firstRipple < secondRipple)
-        ? firstRipple
-        : secondRipple;
-      if (ripple < 0) {
-        marker.scale.setScalar(1);
-        ring.scale.setScalar(1.1);
-        ringMaterial.opacity = 0;
-      } else {
-        ringMaterial.opacity = (1 - smoothStep(ripple)) * (index === 0 ? 0.24 : 0.3);
-        ring.scale.setScalar(1.1 + smoothStep(ripple) * 1.8);
-      }
+      marker.scale.setScalar(1 + beatStrength * (index === 0 ? 0.095 : 0.12));
+      ring.scale.setScalar(rippleScale);
+      ringMaterial.opacity = rippleOpacity;
     });
   });
 
@@ -382,7 +428,7 @@ function GlobeScene({
     <group ref={group} rotation={[-0.08, -0.42, 0]}>
       <GlobeOcclusion />
       <LandPoints mobile={mobile} />
-      <HeartbeatLine reducedMotion={reducedMotion} />
+      <HeartbeatLines reducedMotion={reducedMotion} />
       <GlobeMarkers reducedMotion={reducedMotion} />
     </group>
   );

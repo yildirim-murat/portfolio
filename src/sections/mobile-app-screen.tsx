@@ -11,7 +11,15 @@ function MobilePlatformMark({ platform }: { platform: "Android" | "iOS" }) {
         aria-hidden="true"
         focusable="false"
       >
-        <path d="M7.2 8.4 5.7 5.8l.9-.5 1.5 2.6a8 8 0 0 1 7.8 0l1.5-2.6.9.5-1.5 2.6a6.8 6.8 0 0 1 2.7 5.4H4.5a6.8 6.8 0 0 1 2.7-5.4ZM8 11a.8.8 0 1 0 0 1.6A.8.8 0 0 0 8 11Zm8 0a.8.8 0 1 0 0 1.6.8.8 0 0 0 0-1.6ZM4.5 14.8h15v4.1a1.1 1.1 0 0 1-1.1 1.1h-.7v2h-1.5v-2h-7v2H7.7v-2H7a1.1 1.1 0 0 1-1.1-1.1v-4.1ZM2.3 14.8h1.5v4.1H2.3v-4.1Zm17.9 0h1.5v4.1h-1.5v-4.1Z" />
+        <path d="m7 5-1.1-1.9.9-.5 1.3 2.2Zm10 0 1.1-1.9-.9-.5-1.3 2.2Z" />
+        <path d="M4 11a8 8 0 0 1 16 0v1H4v-1Z" />
+        <path d="M4.5 12h15v6a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2v-6Z" />
+        <rect x="2.25" y="13" width="2.25" height="5.5" rx="1.1" />
+        <rect x="19.5" y="13" width="2.25" height="5.5" rx="1.1" />
+        <rect x="7.5" y="19.2" width="3" height="3.6" rx="1.4" />
+        <rect x="13.5" y="19.2" width="3" height="3.6" rx="1.4" />
+        <circle cx="8.5" cy="8.5" r=".85" fill="#f2f1ec" />
+        <circle cx="15.5" cy="8.5" r=".85" fill="#f2f1ec" />
       </svg>
     );
   }
@@ -39,6 +47,10 @@ export function MobileAppScreen() {
             {mobileApp.title}
           </h2>
           <p className="mobile-app-description">{mobileApp.description}</p>
+          <p className="project-role">{mobileApp.contribution}</p>
+          <p className="project-technologies">
+            <strong>Teknolojiler:</strong> {mobileApp.technologies.join(" · ")}
+          </p>
         </div>
         <div
           className="mobile-app-previews"

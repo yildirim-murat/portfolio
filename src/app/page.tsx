@@ -16,8 +16,8 @@ export default function Home() {
         <Hero name="Murat YILDIRIM" />
         <WayfinderJourney mascot={<WayfinderBot />}>
           <AboutScreen />
-          <FeaturedProjectScreen />
           <AiModelScreen />
+          <FeaturedProjectScreen />
           <MobileAppScreen />
         </WayfinderJourney>
         <ContactScreen />

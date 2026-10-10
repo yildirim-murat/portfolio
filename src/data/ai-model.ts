@@ -1,13 +1,16 @@
 export const aiModel = {
-  kicker: "04 / Yapay zekâ",
-  title: "İhtiyaca göre eğitilen yapay zekâ modeli.",
+  kicker: "03 / Yapay zekâ",
+  title: "Ses Analizi ve Denetim",
   description:
-    "Belirli bir kullanım amacı için eğitilen modelin yaklaşımını; veri hazırlığı, eğitim ve değerlendirme adımlarıyla ele alıyorum. Her aşama, modelin hedeflenen ihtiyaca uygunluğunu gözetiyor.",
+    "Eğitilmiş model, ses girdilerini talep niyetini anlamaya ve personel hatalarını tespit etmeye destek olmak için analiz eder; mevcut sistem inceleme API’sine entegre edilmiştir.",
+  contribution:
+    "Modelin geliştirilmesi, teknoloji tercihleri ve API entegrasyonu dahil projenin tüm sorumluluğunu üstlendim.",
+  technologies: ["Ollama", "Whisper", "FastAPI", "Spring Boot", "Next.js", "PostgreSQL"],
   screenshot: {
     src: "/images/ai-model-training.svg",
-    alt: "Yapay zekâ modeli için veri hazırlığı, eğitim ve değerlendirme akışını gösteren şematik çizim.",
+    alt: "Gerçek ürün ekranı olmayan, model eğitimi ve çıktı akışını anlatan temsili şema.",
     width: 1600,
     height: 1000,
   },
-  process: ["Veri hazırlığı", "Model eğitimi", "Değerlendirme"],
+  process: ["Ses girdisi", "Talep niyeti ve hata analizi", "Sistem inceleme API’si"],
 } as const;

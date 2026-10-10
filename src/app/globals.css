@@ -104,6 +104,7 @@ button:focus-visible, [tabindex]:focus-visible {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 10px;
   -webkit-mask-image: radial-gradient(ellipse 72% 72% at center, #000 0 56%, rgb(0 0 0 / 82%) 72%, transparent 100%);
   mask-image: radial-gradient(ellipse 72% 72% at center, #000 0 56%, rgb(0 0 0 / 82%) 72%, transparent 100%);
 }
@@ -179,7 +180,7 @@ button:focus-visible, [tabindex]:focus-visible {
 
 .about-kicker {
   margin: 0 0 clamp(22px, 3vw, 34px);
-  color: #58717a;
+  color: #4a626b;
   font-size: 11px;
   font-weight: 650;
   letter-spacing: .16em;
@@ -205,6 +206,34 @@ button:focus-visible, [tabindex]:focus-visible {
   font-size: clamp(17px, 1.8vw, 21px);
   font-weight: 400;
   line-height: 1.65;
+}
+
+.about-skills {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 40px;
+  margin: clamp(30px, 4vw, 46px) 0 0;
+  padding-top: 23px;
+  border-top: 1px solid rgb(31 48 54 / 16%);
+}
+
+.about-skill-group { min-width: 0; }
+
+.about-skill-title {
+  margin: 0;
+  color: #30464d;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: .045em;
+  line-height: 1.45;
+}
+
+.about-skill-list {
+  margin: 6px 0 0;
+  color: #59676b;
+  font-size: 13px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
 }
 
 .dashboard-screen {
@@ -242,7 +271,7 @@ button:focus-visible, [tabindex]:focus-visible {
 
 .ai-model-kicker {
   margin: 0 0 clamp(22px, 3vw, 34px);
-  color: #638088;
+  color: #4a626b;
   font-size: 10px;
   font-weight: 650;
   letter-spacing: .16em;
@@ -339,7 +368,7 @@ button:focus-visible, [tabindex]:focus-visible {
 
 .mobile-app-kicker {
   margin: 0 0 clamp(22px, 3vw, 34px);
-  color: #688189;
+  color: #4a626b;
   font-size: 10px;
   font-weight: 650;
   letter-spacing: .16em;
@@ -413,15 +442,82 @@ button:focus-visible, [tabindex]:focus-visible {
 
 .contact-screen {
   position: relative;
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   min-height: 100svh;
-  place-items: center;
+  gap: clamp(18px, 3vh, 30px);
   overflow: clip;
   isolation: isolate;
   padding: clamp(96px, 14svh, 144px) max(28px, env(safe-area-inset-right)) clamp(72px, 10svh, 108px) max(28px, env(safe-area-inset-left));
   background: #111b21;
   color: #edf0f2;
   color-scheme: dark;
+}
+
+.contact-invitation {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 720px);
+  margin-inline: auto;
+  text-align: center;
+}
+
+.contact-title {
+  max-width: 16ch;
+  margin: 0 auto;
+  color: #edf0f2;
+  font-family: "Space Grotesk", Arial, "Helvetica Neue", sans-serif;
+  font-size: clamp(38px, 5.4vw, 68px);
+  font-weight: 430;
+  letter-spacing: -.06em;
+  line-height: 1;
+}
+
+.contact-copy {
+  max-width: 550px;
+  margin: 16px auto 0;
+  color: #b7c1c5;
+  font-size: clamp(15px, 1.5vw, 17px);
+  line-height: 1.6;
+}
+
+.contact-cta {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 10px;
+  margin-top: 17px;
+  padding: 0 1px;
+  border-bottom: 1px solid rgb(198 230 238 / 58%);
+  color: #d8e9ed;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.contact-cta:hover { border-color: #f0d7a4; color: #f0d7a4; }
+.contact-cta:focus-visible { outline: 2px solid #c6e6ee; outline-offset: 5px; }
+
+.contact-footer {
+  position: absolute;
+  z-index: 1;
+  right: max(28px, env(safe-area-inset-right));
+  bottom: max(22px, env(safe-area-inset-bottom));
+  left: max(28px, env(safe-area-inset-left));
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.contact-copyright {
+  margin: 0;
+  color: #9ba8ae;
+  font-size: 10px;
+  letter-spacing: .035em;
+  line-height: 1.5;
 }
 
 .contact-screen::before {
@@ -471,7 +567,7 @@ button:focus-visible, [tabindex]:focus-visible {
   grid-template-columns: repeat(8, minmax(0, 1fr));
   grid-template-rows: repeat(2, minmax(140px, 1fr));
   width: min(100%, 1080px);
-  min-height: min(62svh, 560px);
+  min-height: min(48svh, 420px);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -499,8 +595,12 @@ a.contact-link:hover { color: #d0eaf1; transform: translateY(-3px); }
 a.contact-link:focus-visible { outline: 2px solid #c6e6ee; outline-offset: 2px; }
 
 @media (max-width: 640px) {
-  .contact-screen { padding-block: 84px 56px; }
-  .contact-link-list { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(128px, 1fr)); min-height: 320px; }
+  .contact-screen { gap: 14px; padding: 100px max(24px, env(safe-area-inset-right)) 82px max(24px, env(safe-area-inset-left)); }
+  .contact-title { max-width: 15ch; font-size: clamp(36px, 10vw, 48px); }
+  .contact-copy { margin-top: 12px; font-size: 15px; }
+  .contact-cta { margin-top: 12px; }
+  .contact-footer { right: max(20px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); left: max(20px, env(safe-area-inset-left)); justify-content: center; }
+  .contact-link-list { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(110px, 1fr)); min-height: 250px; }
   .contact-link-item[data-channel="linkedin"] { grid-column: 1; grid-row: 1; justify-self: start; align-self: start; }
   .contact-link-item[data-channel="whatsapp"] { grid-column: 2; grid-row: 1; justify-self: end; align-self: end; }
   .contact-link-item[data-channel="email"] { grid-column: 1; grid-row: 2; justify-self: center; align-self: center; }
@@ -568,6 +668,38 @@ a.contact-link:focus-visible { outline: 2px solid #c6e6ee; outline-offset: 2px; 
   line-height: 1.65;
 }
 
+.project-role {
+  margin: 15px 0 0;
+  font-size: 14px;
+  line-height: 1.58;
+}
+
+.ai-model-screen .project-role,
+.mobile-app-screen .project-role { color: #5a6b70; }
+.ai-model-screen .project-technologies,
+.mobile-app-screen .project-technologies { color: #5a6b70; }
+.ai-model-screen .project-technologies strong,
+.mobile-app-screen .project-technologies strong { color: #30464d; }
+.dashboard-screen .project-role { color: #c0cbd0; }
+
+.project-technologies {
+  margin: 12px 0 0;
+  color: #c0cbd0;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.project-technologies strong {
+  color: #edf0f2;
+  font-weight: 600;
+}
+
+.mobile-app-copy .project-technologies {
+  margin-top: 11px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
 .dashboard-visual {
   width: 100%;
   margin: 0;
@@ -633,6 +765,30 @@ a.contact-link:focus-visible { outline: 2px solid #c6e6ee; outline-offset: 2px; 
   line-height: 1.55;
 }
 
+.hero-supporting-copy {
+  max-width: 390px;
+  margin: 14px 0 0;
+  color: #c1cbd0;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.hero-contact-link {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 9px;
+  margin-top: 9px;
+  color: #e4d2b1;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.hero-contact-link:hover { color: #f4e3c4; }
+.hero-contact-link:focus-visible { outline: 2px solid #d9c59f; outline-offset: 4px; }
+
 .globe-frame {
   position: absolute;
   z-index: 1;
@@ -696,11 +852,16 @@ a.contact-link:focus-visible { outline: 2px solid #c6e6ee; outline-offset: 2px; 
   .hero-name { font-size: clamp(40px, 11vw, 62px); }
   .hero-role { margin-top: 19px; font-size: 12px; letter-spacing: .09em; }
   .hero-tagline { max-width: 340px; margin-top: 9px; font-size: 16px; line-height: 1.45; }
+  .hero-supporting-copy { max-width: 360px; margin-top: 10px; font-size: 14px; line-height: 1.48; }
+  .hero-contact-link { min-height: 40px; gap: 8px; margin-top: 8px; font-size: 12px; }
   .globe-frame { top: auto; right: auto; bottom: clamp(10px, 2.4svh, 20px); left: 50%; width: min(84vw, 47svh, 390px); transform: translateX(-50%); }
   .about-screen { padding: 140px 28px 76px; }
   .about-kicker { margin-bottom: 22px; font-size: 10px; }
   .about-title { max-width: 16ch; font-size: clamp(43px, 10.5vw, 66px); }
   .about-copy { max-width: 520px; margin-top: 22px; font-size: 17px; line-height: 1.58; }
+  .about-skills { grid-template-columns: minmax(0, 1fr); gap: 15px; margin-top: 28px; padding-top: 19px; }
+  .about-skill-title { font-size: 10px; }
+  .about-skill-list { margin-top: 4px; font-size: 12px; line-height: 1.58; }
   .dashboard-screen { padding: 112px 24px 144px; }
   .dashboard-screen { padding-left: max(24px, env(safe-area-inset-left)); }
   .dashboard-layout { grid-template-columns: minmax(0, 1fr); gap: 30px; }
@@ -708,6 +869,9 @@ a.contact-link:focus-visible { outline: 2px solid #c6e6ee; outline-offset: 2px; 
   .dashboard-kicker { margin-bottom: 20px; font-size: 9px; }
   .dashboard-title { max-width: 12ch; font-size: clamp(43px, 11vw, 64px); }
   .dashboard-description { max-width: 500px; margin-top: 18px; font-size: 16px; line-height: 1.58; }
+  .project-role { margin-top: 12px; font-size: 13px; line-height: 1.52; }
+  .project-technologies { margin-top: 9px; font-size: 11px; }
+  .mobile-app-copy .project-technologies { margin-top: 8px; font-size: 11px; }
   .dashboard-visual { border-radius: 9px; }
   .ai-model-screen {
     grid-template-columns: minmax(0, 1fr);
@@ -735,11 +899,22 @@ a.contact-link:focus-visible { outline: 2px solid #c6e6ee; outline-offset: 2px; 
 }
 
 @media (max-width: 740px) and (max-height: 520px) {
-  .hero-copy { top: 50%; right: auto; left: 24px; width: 46%; transform: translateY(-50%); }
+  .hero-copy { top: 50%; right: auto; left: 24px; width: min(46%, 340px); transform: translateY(-50%); }
   .hero-name { font-size: clamp(28px, 8vw, 45px); }
   .hero-role { margin-top: 13px; font-size: 11px; }
   .hero-tagline { max-width: 270px; margin-top: 7px; font-size: 14px; line-height: 1.38; }
-  .globe-frame { top: 50%; right: 16px; bottom: auto; left: auto; width: min(47vw, 65svh, 270px); transform: translateY(-50%); }
+  .hero-supporting-copy { max-width: 290px; margin-top: 6px; font-size: 12px; line-height: 1.38; }
+  .hero-contact-link { min-height: 32px; margin-top: 3px; font-size: 11px; }
+  .globe-frame { top: 50%; right: 16px; bottom: auto; left: auto; width: min(44vw, 65svh, 270px); transform: translateY(-50%); }
+}
+
+@media (max-width: 420px) and (max-height: 600px) {
+  .hero-copy { top: 86px; right: 20px; left: 20px; width: auto; transform: none; }
+  .hero-name { font-size: clamp(36px, 10vw, 44px); }
+  .hero-role { margin-top: 12px; }
+  .hero-tagline { max-width: 310px; }
+  .hero-supporting-copy { max-width: 310px; }
+  .globe-frame { top: auto; right: auto; bottom: 10px; left: 50%; width: min(58vw, 29svh, 190px); transform: translateX(-50%); }
 }
 
 @media (prefers-reduced-motion: reduce) {

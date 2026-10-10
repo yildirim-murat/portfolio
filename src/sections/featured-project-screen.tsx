@@ -6,9 +6,13 @@ export function FeaturedProjectScreen() {
     <section className="dashboard-screen" aria-labelledby="dashboard-title" lang="tr">
       <div className="dashboard-layout">
         <div className="dashboard-copy">
-          <p className="dashboard-kicker">03 / Öne çıkan konsept</p>
+          <p className="dashboard-kicker">{featuredProject.kicker}</p>
           <h2 className="dashboard-title" id="dashboard-title">{featuredProject.name}</h2>
           <p className="dashboard-description">{featuredProject.description}</p>
+          <p className="project-role">{featuredProject.contribution}</p>
+          <p className="project-technologies">
+            <strong>Teknolojiler:</strong> {featuredProject.technologies.join(" · ")}
+          </p>
         </div>
         <figure className="dashboard-visual">
           <Image

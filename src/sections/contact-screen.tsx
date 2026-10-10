@@ -1,4 +1,5 @@
 import { contactLinks, type ContactChannel } from "@/data/contact-links";
+import { ContactCopyright } from "@/components/contact-copyright";
 
 function ContactIcon({ channel }: { channel: ContactChannel }) {
   const common = {
@@ -38,8 +39,16 @@ function ContactIcon({ channel }: { channel: ContactChannel }) {
 
 export function ContactScreen() {
   return (
-    <section className="contact-screen" aria-labelledby="contact-title" lang="tr">
-      <h2 className="sr-only" id="contact-title">İletişim</h2>
+    <section className="contact-screen" id="contact" aria-labelledby="contact-title" lang="tr">
+      <div className="contact-invitation">
+        <h2 className="contact-title" id="contact-title">Birlikte ne geliştirebiliriz?</h2>
+        <p className="contact-copy">
+          Güvenli ve kullanımı kolay bir web ya da mobil çözüm fikriniz varsa, konuşalım.
+        </p>
+        <a className="contact-cta" href="mailto:muratyildirim.work@gmail.com">
+          E-posta ile ulaşın <span aria-hidden="true">↗</span>
+        </a>
+      </div>
       <ul className="contact-link-list">
         {contactLinks.map(({ channel, label, href }) => (
           <li className="contact-link-item" data-channel={channel} key={channel}>
@@ -48,8 +57,8 @@ export function ContactScreen() {
                 className="contact-link"
                 href={href}
                 aria-label={label}
-                target={channel === "email" ? undefined : "_blank"}
-                rel={channel === "email" ? undefined : "noopener noreferrer"}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <ContactIcon channel={channel} />
                 <span className="sr-only">{label}</span>
@@ -63,6 +72,9 @@ export function ContactScreen() {
           </li>
         ))}
       </ul>
+      <footer className="contact-footer">
+        <ContactCopyright initialYear={new Date().getFullYear()} />
+      </footer>
     </section>
   );
 }

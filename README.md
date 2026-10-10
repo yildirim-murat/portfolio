@@ -20,6 +20,10 @@ Then open <http://localhost:3000>. For LAN preview, this development config allo
 
 Configure the project with the **Next.js (Static HTML Export)** preset, build command `npm run build`, and output directory `out`. This is equivalent to Cloudflare's documented `npx next build` command. Node.js 22.14 or newer is required; Cloudflare Pages currently defaults to Node.js 22.16. To pin a version explicitly, set `NODE_VERSION` in the Pages build environment.
 
+Set `NEXT_PUBLIC_SITE_URL` in the production build environment to the site's full public origin (for example, `https://example.com`). This value is used for canonical, Open Graph, and Twitter image URLs; when it is absent or invalid, the build omits those absolute URLs instead of publishing localhost metadata. The 1200 × 630 social preview is generated at build time at `/og-image.png`.
+
+`public/robots.txt` allows indexing. Add a sitemap directive only after the production domain is known and a sitemap is published.
+
 ## Project structure
 
 - `src/app/` — App Router page, layout, and global styles

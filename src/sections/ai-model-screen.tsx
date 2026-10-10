@@ -10,11 +10,15 @@ export function AiModelScreen() {
           {aiModel.title}
         </h2>
         <p className="ai-model-description">{aiModel.description}</p>
-        <ol className="ai-model-process" aria-label="Model geliştirme aşamaları">
+        <p className="project-role">{aiModel.contribution}</p>
+        <ol className="ai-model-process" aria-label="Modelin iş akışı">
           {aiModel.process.map((step) => (
             <li key={step}>{step}</li>
           ))}
         </ol>
+        <p className="project-technologies">
+          <strong>Teknolojiler:</strong> {aiModel.technologies.join(" · ")}
+        </p>
       </div>
       <figure className="ai-model-visual">
         <Image

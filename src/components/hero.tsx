@@ -14,10 +14,16 @@ export default function Hero({ name }: HeroProps) {
             <span>{givenName}</span>
             <span>{familyName.join(" ")}</span>
           </h1>
-          <p className="hero-role">Software Developer</p>
-          <p className="hero-tagline">
+          <p className="hero-role" lang="en">Software Developer</p>
+          <p className="hero-tagline" lang="en">
             <TypewriterTagline text="Building software for the connected world." />
           </p>
+          <p className="hero-supporting-copy" lang="tr">
+            Kurumlar ve bireyler için güvenli web uygulamaları, yönetim panelleri ve mobil çözümler.
+          </p>
+          <a className="hero-contact-link" href="#contact" lang="tr">
+            Projenizi konuşalım <span aria-hidden="true">↘</span>
+          </a>
         </div>
 
         <div className="globe-frame" aria-hidden="false">

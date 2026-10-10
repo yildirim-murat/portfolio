@@ -1,20 +1,23 @@
 export const mobileApp = {
   kicker: "05 / Mobil deneyim",
-  title: "Android ve iOS için mobil uygulama.",
+  title: "Mobil Uygulama",
   description:
-    "Bu bölüm, mobil uygulama fikrini iki platformda temsili ekranlarla gösteriyor. Ürün kapsamı ve gerçek ekran akışı netleştikçe önizlemeler güncellenebilir.",
+    "Belirli bir ihtiyaca odaklanan mobil uygulama; kullanım verileri ve istatistiklerin düzenli biçimde takip edilmesini sağlar.",
+  contribution:
+    "Projenin kapsamını, teknoloji tercihlerini ve geliştirme sürecinin tamamını üstlendim.",
+  technologies: ["Kotlin", "Swift"],
   previews: [
     {
       platform: "Android",
       src: "/images/mobile-app-android.svg",
-      alt: "Android için mobil uygulamanın temsili ekran önizlemesi.",
+      alt: "Android cihaz görünümünde sunulan temsili mobil uygulama ekranı.",
       width: 900,
       height: 1600,
     },
     {
       platform: "iOS",
       src: "/images/mobile-app-ios.svg",
-      alt: "iOS için mobil uygulamanın temsili ekran önizlemesi.",
+      alt: "iOS cihaz görünümünde sunulan temsili mobil uygulama ekranı.",
       width: 900,
       height: 1600,
     },
