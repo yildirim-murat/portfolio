@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { portfolio } from "@/data/portfolio";
 import { absoluteUrl, hasConfiguredSiteUrl } from "@/lib/site-url";
 
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   if (!hasConfiguredSiteUrl && process.env.NODE_ENV === "production") return [];
 
